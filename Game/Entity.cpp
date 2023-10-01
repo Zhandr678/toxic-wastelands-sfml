@@ -1,4 +1,4 @@
-/*#include "Entity.h"
+#include "Entity.h"
 #include <iostream>
 
 Entity::Entity(sf::String file_path, double x, double y)
@@ -58,4 +58,3 @@ void Entity::heal(uint8_t amount)
 {
 
 }
-*/

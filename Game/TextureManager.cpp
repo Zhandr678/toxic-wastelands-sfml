@@ -8,7 +8,7 @@ TextureManager::TextureManager(char** argv)
     textures_canonical_path += "/Textures";
 }
 
-std::string TextureManager::texture_path()
+std::string TextureManager::texture_path() const
 {
     return textures_canonical_path;
 }
@@ -25,12 +25,12 @@ std::vector<std::vector<Block>> TextureManager::get_layers_from_json(std::string
             std::vector <Block> _layer;
             if (layer.contains("data") && layer["data"].is_array())
             {
-                for (int i = 0; i < 20; i++)
+                for (int i = 0; i < MAX_BLOCKS_VERTICAL; i++)
                 {
-                    for (int j = 0; j < 32; j++)
+                    for (int j = 0; j < MAX_BLOCKS_HORIZONTAL; j++)
                     {
                         if (layer["data"][i + j] == 0) { continue; }
-                        _layer.push_back(Block(layer["data"][i + j], "", 32 * j, 32 * i));
+                        _layer.push_back(Block(layer["data"][i + j], this->get_file_from_id(layer["data"][i + j], ), 32 * j, 32 * i));
                     }
                 }
                 result.push_back(_layer);
@@ -60,10 +60,15 @@ nlohmann::json&& TextureManager::parse_to_json(std::string path)
     return std::move(data);
 }
 
-std::string TextureManager::get_file_from_id(uint16_t id, bool is_collidable)
+std::string TextureManager::get_file_from_id(uint16_t id, Texture_Type type)
 {
-    if (is_collidable)
-    {
+    std::string path = textures_canonical_path + "/Map_Textures";
+    if (type == Texture_Type::TILE) { path += "/Tiles"; }
+    else if (type == Texture_Type::OBJECT) { path += "/Objects"; }
+    else if (type == Texture_Type::ANIMATED_OBJECT) { path += "/Animated objects"; }
 
-    }
+    path += std::to_string(id);
+    path += ".png";
+
+    return path;
 }

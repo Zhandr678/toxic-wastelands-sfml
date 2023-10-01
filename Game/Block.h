@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <string>
 
 class Block
 {
@@ -13,7 +14,7 @@ private:
 	size_t x, y;
 public:
 	Block() = delete;
-	Block(uint16_t id, sf::String file, float x, float y);
+	Block(uint16_t id, std::string file, float x, float y);
 
 	void create_mask_from_color(sf::Color color);
 	void draw(sf::RenderWindow& window);

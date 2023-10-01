@@ -1,4 +1,4 @@
-/*#pragma once
+#pragma once
 #include <SFML/Graphics.hpp>
 
 #define MAX_HEALTH 100
@@ -34,5 +34,3 @@ public:
 
 	~Entity() {};
 };
-
-*/
