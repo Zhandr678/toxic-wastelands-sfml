@@ -7,7 +7,7 @@
 
 enum class Texture_Type
 {
-    TILE, OBJECT, ANIMATED_OBJECT
+    NONE, TILE, OBJECT, ANIMATED_OBJECT
 };
 
 constexpr size_t TIME_SCALING = 800;
@@ -17,4 +17,6 @@ constexpr size_t MAX_BLOCKS_VERTICAL = 20;
 constexpr size_t WINDOW_LENGTH = 1080;
 constexpr size_t WINDOW_HEIGHT = 640;
 
-const std::string COLLIDABLE = ;
+const std::string NON_COLLIDABLE_TILE = "notCollidable-tile";
+const std::string NON_COLLIDABLE_OBJ = "notCollidable-obj";
+const std::string COLLIDABLE_TILE = "collidable-tile";

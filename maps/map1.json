@@ -56,7 +56,7 @@
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
          "height":20,
          "id":22,
-         "name":"notCollidable-obj-0",
+         "name":"notCollidable-obj",
          "opacity":1,
          "type":"tilelayer",
          "visible":true,

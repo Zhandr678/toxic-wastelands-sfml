@@ -8,11 +8,18 @@
 
 #include "Constants.h"
 #include "Block.h"
+#include "Layer.h"
+#include "Map.h"
 
 class TextureManager
 {
 private:
 	std::string textures_canonical_path;
+	
+	std::string get_file_from_id(uint16_t id, Texture_Type type);
+	nlohmann::json&& parse_to_json(std::string file);
+	std::vector <Layer> get_layers_from_json(std::string path);
+	Texture_Type get_type(std::string name);
 public:
 	TextureManager() = delete;
 	TextureManager(const TextureManager& other) = delete;
@@ -20,9 +27,8 @@ public:
 	TextureManager(char** argv);
 
 	std::string texture_path() const;
-	std::vector <std::vector <Block>> get_layers_from_json(std::string path);
-	nlohmann::json&& parse_to_json(std::string file);
-	std::string get_file_from_id(uint16_t id, Texture_Type type);
+	
+	Map generate_map(std::string json_path, std::vector <std::string> background_files);
 
 	~TextureManager() {};
 };

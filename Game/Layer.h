@@ -2,14 +2,14 @@
 #include <vector>
 #include "Block.h"
 
-template <bool b>
 class Layer 
 {
 private:
-	bool is_collidable = b;
+	bool is_collidable;
 	std::vector <Block> layer;
 public:
 	Layer() = delete;
-	Layer();
+	Layer(std::vector <Block> layer, bool is_collidable);
+	~Layer();
 };
 

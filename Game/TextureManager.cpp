@@ -13,27 +13,36 @@ std::string TextureManager::texture_path() const
     return textures_canonical_path;
 }
 
-std::vector<std::vector<Block>> TextureManager::get_layers_from_json(std::string path)
+Map TextureManager::generate_map(std::string json_path, std::vector <std::string> background_files)
+{
+    return Map(get_layers_from_json(json_path), background_files);
+}
+
+std::vector<Layer> TextureManager::get_layers_from_json(std::string path)
 {
     nlohmann::json data = this->parse_to_json(path);
-    std::vector <std::vector <Block>> result;
+    std::vector <Layer> result;
 
     if (data.contains("layers") && data["layers"].is_array())
     {
         for (const auto& layer : data["layers"])
         {
             std::vector <Block> _layer;
+            bool is_collidable = false;
             if (layer.contains("data") && layer["data"].is_array())
             {
                 for (int i = 0; i < MAX_BLOCKS_VERTICAL; i++)
                 {
                     for (int j = 0; j < MAX_BLOCKS_HORIZONTAL; j++)
                     {
-                        if (layer["data"][i + j] == 0) { continue; }
-                        _layer.push_back(Block(layer["data"][i + j], this->get_file_from_id(layer["data"][i + j], ), 32 * j, 32 * i));
+                        uint16_t id = layer["data"][i + j].get<unsigned int>();
+                        std::string name = layer["name"].get<std::string>();
+                        if (id == 0) { continue; }
+                        _layer.push_back(Block(id, this->get_file_from_id(id, get_type(name)), 32 * j, 32 * i));
+                        name == COLLIDABLE_TILE ? is_collidable = true : is_collidable = false;
                     }
                 }
-                result.push_back(_layer);
+                result.push_back(Layer(_layer, is_collidable));
             }
         }
     }
@@ -71,4 +80,11 @@ std::string TextureManager::get_file_from_id(uint16_t id, Texture_Type type)
     path += ".png";
 
     return path;
+}
+
+Texture_Type TextureManager::get_type(std::string name)
+{
+    if (name == COLLIDABLE_TILE or name == NON_COLLIDABLE_TILE) { return Texture_Type::TILE; }
+    else if (name == NON_COLLIDABLE_OBJ) { return Texture_Type::OBJECT; }
+    else { return Texture_Type::NONE; }
 }

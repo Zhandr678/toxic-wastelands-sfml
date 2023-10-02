@@ -1,6 +1,6 @@
 #include "Block.h"
 
-Block::Block(uint16_t id, sf::String file, float x, float y)
+Block::Block(uint16_t id, std::string file, float x, float y)
 {
 	this->id = id;
 	this->file = file;
