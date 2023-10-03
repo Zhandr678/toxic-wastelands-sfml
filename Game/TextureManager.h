@@ -17,7 +17,7 @@ private:
 	std::string textures_canonical_path;
 	
 	std::string get_file_from_id(uint16_t id, Texture_Type type);
-	nlohmann::json&& parse_to_json(std::string file);
+	nlohmann::json parse_to_json(std::string file);
 	std::vector <Layer> get_layers_from_json(std::string path);
 	Texture_Type get_type(std::string name);
 public:
@@ -28,7 +28,7 @@ public:
 
 	std::string texture_path() const;
 	
-	Map generate_map(std::string json_path, std::vector <std::string> background_files);
+	Map generate_map(std::string json_path, std::string background_file);
 
 	~TextureManager() {};
 };

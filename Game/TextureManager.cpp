@@ -13,9 +13,9 @@ std::string TextureManager::texture_path() const
     return textures_canonical_path;
 }
 
-Map TextureManager::generate_map(std::string json_path, std::vector <std::string> background_files)
+Map TextureManager::generate_map(std::string json_path, std::string background_file)
 {
-    return Map(get_layers_from_json(json_path), background_files);
+    return Map(get_layers_from_json(json_path), background_file);
 }
 
 std::vector<Layer> TextureManager::get_layers_from_json(std::string path)
@@ -25,7 +25,8 @@ std::vector<Layer> TextureManager::get_layers_from_json(std::string path)
 
     if (data.contains("layers") && data["layers"].is_array())
     {
-        for (const auto& layer : data["layers"])
+        nlohmann::json layers = data["layers"];
+        for (const auto& layer : layers)
         {
             std::vector <Block> _layer;
             bool is_collidable = false;
@@ -35,10 +36,11 @@ std::vector<Layer> TextureManager::get_layers_from_json(std::string path)
                 {
                     for (int j = 0; j < MAX_BLOCKS_HORIZONTAL; j++)
                     {
-                        uint16_t id = layer["data"][i + j].get<unsigned int>();
-                        std::string name = layer["name"].get<std::string>();
+                        uint16_t id = layer["data"][i * MAX_BLOCKS_HORIZONTAL + j];
+                        std::string name = layer["name"];
                         if (id == 0) { continue; }
-                        _layer.push_back(Block(id, this->get_file_from_id(id, get_type(name)), 32 * j, 32 * i));
+
+                        _layer.push_back(Block(id, this->get_file_from_id(id, get_type(name)), static_cast<float>(32 * j), static_cast<float>(32 * i)));
                         name == COLLIDABLE_TILE ? is_collidable = true : is_collidable = false;
                     }
                 }
@@ -49,7 +51,7 @@ std::vector<Layer> TextureManager::get_layers_from_json(std::string path)
     return result;
 }
 
-nlohmann::json&& TextureManager::parse_to_json(std::string path)
+nlohmann::json TextureManager::parse_to_json(std::string path)
 {
     std::ifstream file(path);
     if (!file.is_open()) 
@@ -66,7 +68,7 @@ nlohmann::json&& TextureManager::parse_to_json(std::string path)
         std::cerr << "JSON parsing error: " << e.what() << std::endl;
         return 1;
     }
-    return std::move(data);
+    return data;
 }
 
 std::string TextureManager::get_file_from_id(uint16_t id, Texture_Type type)
@@ -76,7 +78,7 @@ std::string TextureManager::get_file_from_id(uint16_t id, Texture_Type type)
     else if (type == Texture_Type::OBJECT) { path += "/Objects"; }
     else if (type == Texture_Type::ANIMATED_OBJECT) { path += "/Animated objects"; }
 
-    path += std::to_string(id);
+    path += "/" + std::to_string(id);
     path += ".png";
 
     return path;

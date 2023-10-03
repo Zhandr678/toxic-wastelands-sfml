@@ -1,41 +1,40 @@
 #include "Map.h"
 
-Map::Map(std::vector<sf::String> background_files, std::vector<std::vector<sf::String>> block_files)
+Map::Map(std::vector<Layer> grid, std::string background_file) : grid(grid)
 {
-	this->background_image.create(WINDOW_LENGTH, WINDOW_HEIGHT);
-	for (const sf::String& file : background_files)
-	{
-		sf::Image i;
-		i.loadFromFile(file);
-		this->background_image.copy(i, 0, 0);
-	}
+	this->background_image.loadFromFile(background_file);
 	this->background_texture.loadFromImage(this->background_image);
 	this->background_sprite.setTexture(this->background_texture);
-
-	for (int i = 0; i < block_files.size(); i++)
-	{
-		std::vector <Block> temp;
-		for (int j = 0; j < block_files[i].size(); j++)
-		{
-			if (block_files[i][j] != NULL_FILE)
-			{
-				temp.push_back(Block(block_files[i][j], i * TILE_SIZE, j * TILE_SIZE));
-			}
-		}
-		this->grid.push_back(temp);
-	}
+	this->background_sprite.setPosition(0.0f, 0.0f);
 }
 
-void Map::draw(sf::RenderWindow& window)
+Map::Map(const Map& other)
+{
+	this->grid = other.grid;
+	this->background_image = other.background_image;
+	this->background_texture.loadFromImage(this->background_image);
+	this->background_sprite.setTexture(this->background_texture);
+	this->background_sprite.setPosition(0.0f, 0.0f);
+}
+
+Map& Map::operator=(const Map& other)
+{
+	if (this != &other)
+	{
+		this->background_image = other.background_image;
+		this->background_texture.loadFromImage(this->background_image);
+		this->background_sprite.setTexture(this->background_texture);
+		this->background_sprite.setPosition(0, 0);
+	}
+	return *this;
+}
+
+void Map::draw_map(sf::RenderWindow& window)
 {
 	window.draw(this->background_sprite);
-
-	for (auto& vec : this->grid)
+	for (const Layer& layer : this->grid)
 	{
-		for (Block& block : vec)
-		{
-			block.draw(window);
-		}
+		layer.draw_layer(window);
 	}
 }
 
