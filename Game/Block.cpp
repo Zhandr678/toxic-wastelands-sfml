@@ -1,6 +1,11 @@
 #include "Block.h"
 
-Block::Block(uint16_t id, std::string file, float x, float y)
+Block::Block()
+{
+	
+}
+
+Block::Block(uint16_t id, std::string file, float x, float y, bool is_collidable)
 {
 	this->id = id;
 	this->file = file;
@@ -12,6 +17,8 @@ Block::Block(uint16_t id, std::string file, float x, float y)
 	this->sprite.setTexture(this->texture);
 	this->sprite.setOrigin(0, this->sprite.getLocalBounds().height);
 	this->sprite.setPosition(this->x, this->y);
+	this->is_collidable = is_collidable;
+	this->hitbox = sf::FloatRect(this->x, this->y, TILE_SIZE, TILE_SIZE);
 }
 
 Block::Block(const Block& other)
@@ -26,6 +33,8 @@ Block::Block(const Block& other)
 	this->sprite.setTexture(this->texture);
 	this->sprite.setOrigin(0, this->sprite.getLocalBounds().height);
 	this->sprite.setPosition(this->x, this->y);
+	this->is_collidable = other.is_collidable;
+	this->hitbox = other.hitbox;
 }
 
 Block& Block::operator=(const Block& other)
@@ -42,8 +51,20 @@ Block& Block::operator=(const Block& other)
 		this->sprite.setTexture(this->texture);
 		this->sprite.setOrigin(0, this->sprite.getLocalBounds().height);
 		this->sprite.setPosition(this->x, this->y);
+		this->is_collidable = other.is_collidable;
+		this->hitbox = other.hitbox;
 	}
 	return *this;
+}
+
+bool Block::collidable() const
+{
+	return is_collidable;
+}
+
+uint16_t Block::get_id() const
+{
+	return id;
 }
 
 void Block::create_mask_from_color(sf::Color color)
@@ -57,4 +78,9 @@ void Block::create_mask_from_color(sf::Color color)
 void Block::draw(sf::RenderWindow& window) const
 {
 	window.draw(sprite);
+}
+
+sf::FloatRect Block::get_hitbox() const
+{
+	return this->hitbox;
 }

@@ -15,12 +15,13 @@ class TextureManager
 {
 private:
 	std::string textures_canonical_path;
-	
+
 	std::string get_file_from_id(uint16_t id, Texture_Type type);
 	nlohmann::json parse_to_json(std::string file);
 	std::vector <Layer> get_layers_from_json(std::string path);
 	Texture_Type get_type(std::string name);
 public:
+	friend class Engine;
 	TextureManager() = delete;
 	TextureManager(const TextureManager& other) = delete;
 	TextureManager& operator =(const TextureManager& other) = delete;

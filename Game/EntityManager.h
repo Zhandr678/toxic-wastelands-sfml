@@ -2,7 +2,12 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 
-namespace EntityManager
+#include "Player.h"
+
+class EntityManager
 {
-	
-}
+private:
+
+public:
+	friend class Engine;
+};

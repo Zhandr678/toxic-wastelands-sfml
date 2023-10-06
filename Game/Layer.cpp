@@ -32,3 +32,22 @@ void Layer::draw_layer(sf::RenderWindow& window) const
 
 Layer::~Layer() {}
 
+Block Layer::get_block(uint16_t id) const
+{
+	for (const Block& block : layer)
+	{
+		if (block.get_id() == id) { return block; }
+	}
+	std::string error = "No block with id: " + std::to_string(id);
+	throw std::exception(error.c_str());
+}
+
+bool Layer::collidable() const
+{
+	return this->is_collidable;
+}
+
+std::vector <Block> Layer::get_layer() const
+{
+	return this->layer;
+}

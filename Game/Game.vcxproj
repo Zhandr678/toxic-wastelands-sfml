@@ -20,7 +20,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Block.cpp" />
-    <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="FileManager.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Layer.cpp" />
     <ClCompile Include="Map.cpp" />
@@ -29,7 +31,9 @@
   <ItemGroup>
     <ClInclude Include="Block.h" />
     <ClInclude Include="Constants.h" />
-    <ClInclude Include="Entity.h" />
+    <ClInclude Include="Engine.h" />
+    <ClInclude Include="FileManager.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="EntityManager.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="Map.h" />

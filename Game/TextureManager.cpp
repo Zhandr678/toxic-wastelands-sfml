@@ -39,9 +39,8 @@ std::vector<Layer> TextureManager::get_layers_from_json(std::string path)
                         uint16_t id = layer["data"][i * MAX_BLOCKS_HORIZONTAL + j];
                         std::string name = layer["name"];
                         if (id == 0) { continue; }
-
-                        _layer.push_back(Block(id, this->get_file_from_id(id, get_type(name)), static_cast<float>(32 * j), static_cast<float>(32 * i)));
                         name == COLLIDABLE_TILE ? is_collidable = true : is_collidable = false;
+                        _layer.push_back(Block(id, this->get_file_from_id(id, get_type(name)), static_cast<float>(32 * j), static_cast<float>(32 * i), is_collidable));
                     }
                 }
                 result.push_back(Layer(_layer, is_collidable));
