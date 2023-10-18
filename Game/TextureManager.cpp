@@ -15,39 +15,48 @@ std::string TextureManager::texture_path() const
 
 Map TextureManager::generate_map(std::string json_path, std::string background_file)
 {
-    return Map(get_layers_from_json(json_path), background_file);
-}
-
-std::vector<Layer> TextureManager::get_layers_from_json(std::string path)
-{
-    nlohmann::json data = this->parse_to_json(path);
+    nlohmann::json data = this->parse_to_json(json_path);
     std::vector <Layer> result;
 
-    if (data.contains("layers") && data["layers"].is_array())
+    if (data.contains("layers") and data["layers"].is_array())
     {
         nlohmann::json layers = data["layers"];
+        
         for (const auto& layer : layers)
         {
-            std::vector <Block> _layer;
-            bool is_collidable = false;
-            if (layer.contains("data") && layer["data"].is_array())
+            std::string name = layer["name"];
+            Texture_Type type = this->get_type(name);
+            if (layer.contains("data") and layer["data"].is_array())
             {
+                std::vector <std::vector <Block>> full_layer;
+                std::vector <std::vector <bool>> full_hitbox_grid;
                 for (int i = 0; i < MAX_BLOCKS_VERTICAL; i++)
                 {
+                    std::vector <Block> _layer;
+                    std::vector <bool> _hitbox_grid;
                     for (int j = 0; j < MAX_BLOCKS_HORIZONTAL; j++)
                     {
                         uint16_t id = layer["data"][i * MAX_BLOCKS_HORIZONTAL + j];
-                        std::string name = layer["name"];
-                        if (id == 0) { continue; }
-                        name == COLLIDABLE_TILE ? is_collidable = true : is_collidable = false;
-                        _layer.push_back(Block(id, this->get_file_from_id(id, get_type(name)), static_cast<float>(32 * j), static_cast<float>(32 * i), is_collidable));
+                        
+                        if (id == 0) 
+                        { 
+                            _layer.push_back(__NULL_BLOCK__()); 
+                            _hitbox_grid.push_back(false);
+                        }
+                        else 
+                        {
+                            _layer.push_back(Block(id, this->get_file_from_id(id, type), static_cast<float>(32 * j), static_cast<float>(32 * i)));
+                            _hitbox_grid.push_back(true);
+                        }
                     }
+                    full_layer.push_back(_layer);
+                    full_hitbox_grid.push_back(_hitbox_grid);
                 }
-                result.push_back(Layer(_layer, is_collidable));
+                result.push_back(Layer(name, full_layer, full_hitbox_grid, type));
             }
         }
     }
-    return result;
+    return Map(result, background_file);
 }
 
 nlohmann::json TextureManager::parse_to_json(std::string path)
@@ -73,7 +82,7 @@ nlohmann::json TextureManager::parse_to_json(std::string path)
 std::string TextureManager::get_file_from_id(uint16_t id, Texture_Type type)
 {
     std::string path = textures_canonical_path + "/Map_Textures";
-    if (type == Texture_Type::TILE) { path += "/Tiles"; }
+    if (type == Texture_Type::COLLIDABLE_TILE or type == Texture_Type::NON_COLLIDABLE_TILE) { path += "/Tiles"; }
     else if (type == Texture_Type::OBJECT) { path += "/Objects"; }
     else if (type == Texture_Type::ANIMATED_OBJECT) { path += "/Animated objects"; }
 
@@ -85,7 +94,8 @@ std::string TextureManager::get_file_from_id(uint16_t id, Texture_Type type)
 
 Texture_Type TextureManager::get_type(std::string name)
 {
-    if (name == COLLIDABLE_TILE or name == NON_COLLIDABLE_TILE) { return Texture_Type::TILE; }
+    if (name == COLLIDABLE_TILE) { return Texture_Type::COLLIDABLE_TILE; }
+    else if (name == NON_COLLIDABLE_TILE) { return Texture_Type::NON_COLLIDABLE_TILE; }
     else if (name == NON_COLLIDABLE_OBJ) { return Texture_Type::OBJECT; }
     else { return Texture_Type::NONE; }
 }

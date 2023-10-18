@@ -1,15 +1,14 @@
 #include "Layer.h"
 
-Layer::Layer(std::vector<Block> layer, bool is_collidable)
+Layer::Layer(std::string name, std::vector<std::vector <Block>> layer, std::vector <std::vector <bool>> grid, 
+	Texture_Type type, uint16_t horizontal_size, uint16_t vertical_size) :
+	name(name), layer(layer), grid(grid), type(type), horizontal_size(horizontal_size), vertical_size(vertical_size)
 {
-	this->layer = layer;
-	this->is_collidable = is_collidable;
 }
 
-Layer::Layer(const Layer& other)
+Layer::Layer(const Layer& other) :
+	name(other.name), layer(other.layer), grid(other.grid), type(other.type), horizontal_size(other.horizontal_size), vertical_size(other.vertical_size)
 {
-	this->layer = other.layer;
-	this->is_collidable = other.is_collidable;
 }
 
 Layer& Layer::operator=(const Layer& other)
@@ -17,37 +16,35 @@ Layer& Layer::operator=(const Layer& other)
 	if (this != &other)
 	{
 		this->layer = other.layer;
-		this->is_collidable = other.is_collidable;
+		this->grid = other.grid;
+		this->name = other.name;
+		this->type = other.type;
+		this->horizontal_size = other.horizontal_size;
+		this->vertical_size = other.vertical_size;
 	}
 	return *this;
 }
 
 void Layer::draw_layer(sf::RenderWindow& window) const
 {
-	for (const Block& block : this->layer)
+	for (int i = 0; i < this->vertical_size; i++)
 	{
-		block.draw(window);
+		for (int j = 0; j < this->horizontal_size; j++)
+		{
+			this->layer[i][j].draw(window);
+		}
 	}
+}
+
+Texture_Type Layer::get_type() const
+{
+	return this->type;
+}
+
+bool Layer::intersects_hitbox_grid(float x, float y) const
+{
+	int index_y = y / TILE_SIZE, index_x = x / TILE_SIZE;
+	return this->grid[index_y + 1][index_x];
 }
 
 Layer::~Layer() {}
-
-Block Layer::get_block(uint16_t id) const
-{
-	for (const Block& block : layer)
-	{
-		if (block.get_id() == id) { return block; }
-	}
-	std::string error = "No block with id: " + std::to_string(id);
-	throw std::exception(error.c_str());
-}
-
-bool Layer::collidable() const
-{
-	return this->is_collidable;
-}
-
-std::vector <Block> Layer::get_layer() const
-{
-	return this->layer;
-}

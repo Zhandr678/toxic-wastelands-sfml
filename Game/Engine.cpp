@@ -1,10 +1,13 @@
 #include "Engine.h"
+#define CURRENT_MAP this->levels[this->current_level]
 
 Engine::Engine(char** argv, std::string maps_folder_path)
 {
 	this->texture_manager = new TextureManager(argv);
-	this->entity_manager = new EntityManager();
-	this->player = new Player("biker.png", 100, 100, 48, 48);
+	this->hero = new Entity(1, "C:/Users/Home/source/repos/Game/Textures/Character_Textures/Biker/biker.png", 32, 325);
+	//this->entity_manager = new EntityManager();
+	//this->player = new Player("player.png", 32, 100, 32, 32);
+	//this->gameover.loadFromFile("gameover.png");
 	this->current_level = 0;
 
 	try
@@ -28,50 +31,83 @@ Engine::Engine(char** argv, std::string maps_folder_path)
 
 void Engine::create_map(std::string path, std::string background_path)
 {
+	/* #TODO: TextureManager->generate_map */
 }
 
 void Engine::create_entity(std::string entity_texture_path, bool is_playable)
 {
+	/* #TODO: EntityManager->generate_entity */
 }
 
-void Engine::set_view_on(uint16_t id)
-{
-}
+//void Engine::set_view()
+//{
+//	view.setCenter(player->x, player->y);
+//}
 
-void Engine::set_focus_on_map(uint16_t id)
-{
-}
+//void Engine::set_focus_on_map(uint16_t id)
+//{
+//	current_level = id;
+//}
 
-void Engine::collision()
+//void Engine::collision()
+//{
+//	/*float tempX = player->x, tempY = player->y;
+//	for (const Layer& layer : levels[current_level].grid)
+//	{
+//		if (layer.is_collidable)
+//		{
+//			for (const Block& block : layer.layer)
+//			{
+//				if (player->hitbox.intersects(block.hitbox))
+//				{
+//					player->x = tempX;
+//					player->y = tempY;
+//					player->sprite.setPosition(tempX, tempY);
+//					player->hitbox.left = tempX;
+//					player->hitbox.top = tempY;
+//				}
+//			}
+//		}
+//	}*/
+//}
+
+void Engine::check_collisions()
 {
-	/*float tempX = player->x, tempY = player->y;
-	for (const Layer& layer : levels[current_level].grid)
+	if (hero->dx > 0 and (CURRENT_MAP.intersects_with_type(hero->x + hero->width, hero->y, Texture_Type::COLLIDABLE_TILE) 
+		or CURRENT_MAP.intersects_with_type(hero->x + hero->width, hero->y + hero->height, Texture_Type::COLLIDABLE_TILE)))
 	{
-		if (layer.is_collidable)
-		{
-			for (const Block& block : layer.layer)
-			{
-				if (player->hitbox.intersects(block.hitbox))
-				{
-					player->x = tempX;
-					player->y = tempY;
-					player->sprite.setPosition(tempX, tempY);
-					player->hitbox.left = tempX;
-					player->hitbox.top = tempY;
-				}
-			}
-		}
-	}*/
+		hero->dx = 0;
+	}
+	if (hero->dx < 0 and (CURRENT_MAP.intersects_with_type(hero->x - TILE_SIZE, hero->y, Texture_Type::COLLIDABLE_TILE)
+		or CURRENT_MAP.intersects_with_type(hero->x - TILE_SIZE, hero->y + hero->height, Texture_Type::COLLIDABLE_TILE)))
+	{
+		hero->dx = 0;
+	}
+	if (hero->dy > 0 and (CURRENT_MAP.intersects_with_type(hero->x, hero->y + hero->height, Texture_Type::COLLIDABLE_TILE)
+		or CURRENT_MAP.intersects_with_type(hero->x + hero->width, hero->y + hero->height, Texture_Type::COLLIDABLE_TILE)))
+	{
+		hero->dy = 0;
+	}
+	if (hero->dy < 0 and (CURRENT_MAP.intersects_with_type(hero->x, hero->y, Texture_Type::COLLIDABLE_TILE)
+		or CURRENT_MAP.intersects_with_type(hero->x + hero->width, hero->y, Texture_Type::COLLIDABLE_TILE)))
+	{
+		hero->dy = 0;
+	}
 }
 
 void Engine::loop(sf::RenderWindow& window, float& timer)
 {
 	levels[current_level].draw_map(window);
-	player->move(timer, levels[current_level]);
-	player->draw(window);
+	hero->draw(window);
+	hero->control(timer);
+	check_collisions();
+	hero->move(timer);
+	//player->move(timer, levels[current_level]);
+	//set_view();
+	//player->draw(window);
 }
 
 Engine::~Engine()
 {
-	delete this->texture_manager, this->entity_manager, this->player;
+	delete this->texture_manager, this->hero;
 }

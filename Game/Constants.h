@@ -1,21 +1,23 @@
 #pragma once
 #include <string>
-#include <filesystem>
-#include <vector>
 
 #define NULL_FILE "NULL"
 
 enum class Texture_Type
 {
-    NONE, TILE, OBJECT, ANIMATED_OBJECT
+    NONE, COLLIDABLE_TILE, NON_COLLIDABLE_TILE, OBJECT, ANIMATED_OBJECT
 };
 
-constexpr size_t TIME_SCALING = 800;
-constexpr size_t TILE_SIZE = 32;
+constexpr size_t TIME_SCALING          = 800;
+constexpr size_t TILE_SIZE             = 32;
 constexpr size_t MAX_BLOCKS_HORIZONTAL = 32;
-constexpr size_t MAX_BLOCKS_VERTICAL = 20;
-constexpr size_t WINDOW_LENGTH = 1000;
-constexpr size_t WINDOW_HEIGHT = 640;
+constexpr size_t MAX_BLOCKS_VERTICAL   = 20;
+constexpr size_t WINDOW_LENGTH         = 1000;
+constexpr size_t WINDOW_HEIGHT         = 600;
+
+constexpr float DEFAULT_SPEED   = 0.15f;
+constexpr float DEFAULT_GRAVITY = 0.0015f;
+constexpr float DEFAULT_MAX_HP  = 100.0f;
 
 const std::string NON_COLLIDABLE_TILE = "notCollidable-tile";
 const std::string NON_COLLIDABLE_OBJ = "notCollidable-obj";
