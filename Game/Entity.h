@@ -26,11 +26,12 @@ private:
 	sf::FloatRect hitbox;
 public:
 	Entity() = delete;
-	Entity(uint16_t id, std::string path, float x, float y, float speed = DEFAULT_SPEED, float MAX_HP = DEFAULT_MAX_HP, float hp = DEFAULT_MAX_HP, float height = TILE_SIZE, float width = TILE_SIZE);
+	Entity(uint16_t id, std::string path, float x, float y, float height = TILE_SIZE, float width = TILE_SIZE, float speed = DEFAULT_SPEED, float MAX_HP = DEFAULT_MAX_HP, float hp = DEFAULT_MAX_HP);
 
 	virtual void control(float time);
 	virtual void move(float time);
 
+	void draw_hitbox(sf::RenderWindow& window);
 	void draw(sf::RenderWindow& window);
 	void change_position(float x, float y);
 	void take_damage(float amount);

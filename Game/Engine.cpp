@@ -4,7 +4,7 @@
 Engine::Engine(char** argv, std::string maps_folder_path)
 {
 	this->texture_manager = new TextureManager(argv);
-	this->hero = new Entity(1, "C:/Users/Home/source/repos/Game/Textures/Character_Textures/Biker/biker.png", 32, 325);
+	this->hero = new Entity(1, "C:/Users/Home/source/repos/Game/Textures/Character_Textures/Biker/biker.png", 32, 325, 34, 32);
 	//this->entity_manager = new EntityManager();
 	//this->player = new Player("player.png", 32, 100, 32, 32);
 	//this->gameover.loadFromFile("gameover.png");
@@ -73,23 +73,23 @@ void Engine::create_entity(std::string entity_texture_path, bool is_playable)
 
 void Engine::check_collisions()
 {
-	if (hero->dx > 0 and (CURRENT_MAP.intersects_with_type(hero->x + hero->width, hero->y, Texture_Type::COLLIDABLE_TILE) 
-		or CURRENT_MAP.intersects_with_type(hero->x + hero->width, hero->y + hero->height, Texture_Type::COLLIDABLE_TILE)))
+	if (hero->dx > 0 and (CURRENT_MAP.intersects_with_type(hero->x + hero->width, hero->y + 2.0f, Texture_Type::COLLIDABLE_TILE) 
+		or CURRENT_MAP.intersects_with_type(hero->x + hero->width, hero->y + hero->height - 2.0f, Texture_Type::COLLIDABLE_TILE)))
 	{
 		hero->dx = 0;
 	}
-	if (hero->dx < 0 and (CURRENT_MAP.intersects_with_type(hero->x - TILE_SIZE, hero->y, Texture_Type::COLLIDABLE_TILE)
-		or CURRENT_MAP.intersects_with_type(hero->x - TILE_SIZE, hero->y + hero->height, Texture_Type::COLLIDABLE_TILE)))
+	if (hero->dx < 0 and (CURRENT_MAP.intersects_with_type(hero->x, hero->y + 2.0f, Texture_Type::COLLIDABLE_TILE)
+		or CURRENT_MAP.intersects_with_type(hero->x, hero->y + hero->height - 2.0f, Texture_Type::COLLIDABLE_TILE)))
 	{
 		hero->dx = 0;
 	}
-	if (hero->dy > 0 and (CURRENT_MAP.intersects_with_type(hero->x, hero->y + hero->height, Texture_Type::COLLIDABLE_TILE)
-		or CURRENT_MAP.intersects_with_type(hero->x + hero->width, hero->y + hero->height, Texture_Type::COLLIDABLE_TILE)))
+	if (hero->dy > 0 and (CURRENT_MAP.intersects_with_type(hero->x + 2.0f, hero->y + hero->height, Texture_Type::COLLIDABLE_TILE)
+		or CURRENT_MAP.intersects_with_type(hero->x + hero->width - 2.0f, hero->y + hero->height, Texture_Type::COLLIDABLE_TILE)))
 	{
 		hero->dy = 0;
 	}
-	if (hero->dy < 0 and (CURRENT_MAP.intersects_with_type(hero->x, hero->y, Texture_Type::COLLIDABLE_TILE)
-		or CURRENT_MAP.intersects_with_type(hero->x + hero->width, hero->y, Texture_Type::COLLIDABLE_TILE)))
+	if (hero->dy < 0 and (CURRENT_MAP.intersects_with_type(hero->x + 2.0f, hero->y, Texture_Type::COLLIDABLE_TILE)
+		or CURRENT_MAP.intersects_with_type(hero->x + hero->width - 2.0f, hero->y, Texture_Type::COLLIDABLE_TILE)))
 	{
 		hero->dy = 0;
 	}
@@ -99,6 +99,7 @@ void Engine::loop(sf::RenderWindow& window, float& timer)
 {
 	levels[current_level].draw_map(window);
 	hero->draw(window);
+	hero->draw_hitbox(window);
 	hero->control(timer);
 	check_collisions();
 	hero->move(timer);

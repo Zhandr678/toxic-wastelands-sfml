@@ -1,14 +1,14 @@
 #include "Entity.h"
 #include <iostream>
 
-Entity::Entity(uint16_t id, std::string path, float x, float y, float speed, float MAX_HP, float hp, float height, float width) :
+Entity::Entity(uint16_t id, std::string path, float x, float y, float height, float width, float speed, float MAX_HP, float hp) :
 	id(id), x(x), y(y), speed(speed), MAX_HP(MAX_HP), hp(hp), height(height), width(width)
 {
 	this->image.loadFromFile(path);
 	this->image.createMaskFromColor(sf::Color::White);
 	this->texture.loadFromImage(this->image);
 	this->sprite.setTexture(this->texture);
-	this->sprite.setTextureRect(sf::IntRect(48 * static_cast <int>(this->current_frame), 0, this->width, this->height));
+	this->sprite.setTextureRect(sf::IntRect(48 * static_cast <int>(this->current_frame), 4, this->width, this->height));
 	this->sprite.setPosition(this->x, this->y);
 	this->hitbox = sf::FloatRect(this->x, this->y, this->width, this->height);
 }
@@ -26,19 +26,20 @@ void Entity::control(float time)
 		this->current_frame += 0.005 * time;
 		this->facing_right = true;
 		if (this->current_frame > 6) { current_frame -= 6; }
-		sprite.setTextureRect(sf::IntRect(48 * static_cast <int>(this->current_frame), 33, this->width, this->height));
+		sprite.setTextureRect(sf::IntRect(48 * static_cast <int>(this->current_frame), 35, this->width, this->height));
 		key_pressed = true;
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
 		this->dx = -1 * this->speed;
 		this->state = State::MOVING_LEFT;
 		this->current_frame += 0.005 * time;
 		this->facing_right = false;
 		if (this->current_frame > 6) { current_frame -= 6; }
-		sprite.setTextureRect(sf::IntRect(48 * static_cast <int>(this->current_frame), 33, this->width, this->height));
+		sprite.setTextureRect(sf::IntRect(48 * static_cast <int>(this->current_frame), 35, this->width, this->height));
 		key_pressed = true;
 	}
+	
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 	{
 		this->dy = -1 * this->speed;
@@ -69,6 +70,17 @@ void Entity::move(float time)
 	//apply_gravity(time);
 
 	this->change_position(this->x, this->y);
+}
+
+void Entity::draw_hitbox(sf::RenderWindow& window)
+{
+	sf::RectangleShape rect;
+	rect.setSize(sf::Vector2f(this->width, this->height));
+	rect.setPosition(this->x, this->y);
+	rect.setFillColor(sf::Color::Transparent);
+	rect.setOutlineThickness(1.0f);
+	rect.setOutlineColor(sf::Color::Yellow);
+	window.draw(rect);
 }
 
 void Entity::draw(sf::RenderWindow& window)
