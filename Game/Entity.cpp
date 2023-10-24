@@ -16,7 +16,11 @@ Entity::Entity(uint16_t id, std::string path, float x, float y, float height, fl
 
 void Entity::control(float time)
 {
-	if (!this->facing_right) { sprite.setScale(-1.0f, 1.0f); } // Mirror horizontally
+	if (!this->facing_right) 
+	{ 
+		sprite.setScale(-1.0f, 1.0f); 
+		sprite.setPosition(x + width, y);
+	} // Mirror horizontally
 	else { sprite.setScale(1.0f, 1.0f); } // Reset to normal
 
 	bool key_pressed = false;

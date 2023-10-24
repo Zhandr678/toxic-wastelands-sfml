@@ -19,6 +19,10 @@ constexpr float DEFAULT_SPEED   = 0.15f;
 constexpr float DEFAULT_GRAVITY = 0.0015f;
 constexpr float DEFAULT_MAX_HP  = 100.0f;
 
+constexpr float UNHARMFUL_Y_SPEED      = 0.8f;
+constexpr float DAMAGE_RATE_PER_SPEED  = 30.0f;
+constexpr float DAMAGE_POWER_PER_SPEED = 2.0f;
+
 const std::string NON_COLLIDABLE_TILE = "notCollidable-tile";
 const std::string NON_COLLIDABLE_OBJ = "notCollidable-obj";
 const std::string COLLIDABLE_TILE = "collidable-tile";

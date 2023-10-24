@@ -74,6 +74,11 @@ void Engine::check_collisions()
 	if (hero->dy > 0 and (CURRENT_MAP.intersects_with_type(hero->x + 2.0f, hero->y + hero->height, Texture_Type::COLLIDABLE_TILE)
 		or CURRENT_MAP.intersects_with_type(hero->x + hero->width - 2.0f, hero->y + hero->height, Texture_Type::COLLIDABLE_TILE)))
 	{
+		if (hero->dy > UNHARMFUL_Y_SPEED) 
+		{  
+			float damage = DAMAGE_RATE_PER_SPEED * pow(hero->dy, DAMAGE_POWER_PER_SPEED);
+			hero->take_damage(damage);
+		}
 		hero->dy = 0;
 	}
 	if ((CURRENT_MAP.intersects_with_type(hero->x + 2.0f, hero->y + hero->height, Texture_Type::COLLIDABLE_TILE)
