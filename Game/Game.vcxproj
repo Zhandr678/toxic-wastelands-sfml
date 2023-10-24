@@ -23,6 +23,7 @@
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="FileManager.cpp" />
+    <ClCompile Include="HealthBar.cpp" />
     <ClCompile Include="Hero.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -36,6 +37,7 @@
     <ClInclude Include="Engine.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="FileManager.h" />
+    <ClInclude Include="HealthBar.h" />
     <ClInclude Include="Hero.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="EntityManager.h" />

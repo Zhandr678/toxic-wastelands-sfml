@@ -2,7 +2,7 @@
 #include <iostream>
 
 Entity::Entity(uint16_t id, std::string path, float x, float y, float height, float width, float speed, float MAX_HP, float hp) :
-	id(id), x(x), y(y), speed(speed), MAX_HP(MAX_HP), hp(hp), height(height), width(width)
+	id(id), x(x), y(y), speed(speed), height(height), width(width)
 {
 	this->image.loadFromFile(path);
 	this->image.createMaskFromColor(sf::Color::White);
@@ -11,6 +11,7 @@ Entity::Entity(uint16_t id, std::string path, float x, float y, float height, fl
 	this->sprite.setTextureRect(sf::IntRect(48 * static_cast <int>(this->current_frame), 4, this->width, this->height));
 	this->sprite.setPosition(this->x, this->y);
 	this->hitbox = sf::FloatRect(this->x, this->y, this->width, this->height);
+	this->HP = HealthBar(5.0f, 5.0f, 96.0f, 16.0f);
 }
 
 void Entity::control(float time)
@@ -29,7 +30,7 @@ void Entity::control(float time)
 		sprite.setTextureRect(sf::IntRect(48 * static_cast <int>(this->current_frame), 35, this->width, this->height));
 		key_pressed = true;
 	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
 		this->dx = -1 * this->speed;
 		this->state = State::MOVING_LEFT;
@@ -39,37 +40,35 @@ void Entity::control(float time)
 		sprite.setTextureRect(sf::IntRect(48 * static_cast <int>(this->current_frame), 35, this->width, this->height));
 		key_pressed = true;
 	}
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-	{
-		this->dy = -1 * this->speed;
-		key_pressed = true;
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-	{
-		this->dy = 1 * this->speed;
-		key_pressed = true;
-	}
-	/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) and this->onGround)
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) and this->onGround and !this->isJumping)
 	{
 		this->dy = -3 * this->speed;
 		this->state = State::JUMP;
 		this->onGround = false;
-	}*/
+		this->isJumping = true;
+	}
 	if (!key_pressed)
 	{
 		this->sprite.setTextureRect(sf::IntRect(0, 0, this->width, this->height));
-		dx = 0; dy = 0;
+		dx = 0;
 	}
 }
 
-void Entity::move(float time)
+void Entity::move(float& time)
 {
 	this->x += this->dx * time;
 	this->y += this->dy * time;
-	//apply_gravity(time);
 
-	this->change_position(this->x, this->y);
+	this->change_position(x, y);
+}
+
+void Entity::apply_gravity(float& time)
+{
+	if (!this->onGround)
+	{
+		this->dy += this->gravity * time;
+		this->isJumping = true;
+	}
 }
 
 void Entity::draw_hitbox(sf::RenderWindow& window)
@@ -83,11 +82,6 @@ void Entity::draw_hitbox(sf::RenderWindow& window)
 	window.draw(rect);
 }
 
-void Entity::draw(sf::RenderWindow& window)
-{
-	window.draw(this->sprite);
-}
-
 void Entity::change_position(float x, float y)
 {
 	this->x = x; this->y = y;
@@ -98,19 +92,22 @@ void Entity::change_position(float x, float y)
 
 void Entity::take_damage(float amount)
 {
-	this->hp -= amount;
-	if (this->hp < 0) { this->isAlive = false; }
+	HP.take_damage(amount);
 }
 
 void Entity::heal(float amount)
 {
-	this->hp += amount;
-	this->hp = std::min(this->hp, this->MAX_HP);
+	HP.heal(amount);
 }
 
-void Entity::apply_gravity(float& time)
+void Entity::draw(sf::RenderWindow& window)
 {
-	this->dy += this->gravity * time;
+	window.draw(this->sprite);
+}
+
+void Entity::draw_health(sf::RenderWindow& window)
+{
+	HP.draw(window);
 }
 
 bool Entity::hitbox_intersects(sf::FloatRect other)

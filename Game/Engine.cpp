@@ -5,9 +5,7 @@ Engine::Engine(char** argv, std::string maps_folder_path)
 {
 	this->texture_manager = new TextureManager(argv);
 	this->hero = new Entity(1, "C:/Users/Home/source/repos/Game/Textures/Character_Textures/Biker/biker.png", 32, 325, 34, 32);
-	//this->entity_manager = new EntityManager();
-	//this->player = new Player("player.png", 32, 100, 32, 32);
-	//this->gameover.loadFromFile("gameover.png");
+
 	this->current_level = 0;
 
 	try
@@ -73,6 +71,22 @@ void Engine::create_entity(std::string entity_texture_path, bool is_playable)
 
 void Engine::check_collisions()
 {
+	if (hero->dy > 0 and (CURRENT_MAP.intersects_with_type(hero->x + 2.0f, hero->y + hero->height, Texture_Type::COLLIDABLE_TILE)
+		or CURRENT_MAP.intersects_with_type(hero->x + hero->width - 2.0f, hero->y + hero->height, Texture_Type::COLLIDABLE_TILE)))
+	{
+		hero->dy = 0;
+	}
+	if ((CURRENT_MAP.intersects_with_type(hero->x + 2.0f, hero->y + hero->height, Texture_Type::COLLIDABLE_TILE)
+		or CURRENT_MAP.intersects_with_type(hero->x + hero->width - 2.0f, hero->y + hero->height, Texture_Type::COLLIDABLE_TILE)))
+	{
+		hero->onGround = true;
+		hero->isJumping = false;
+	}
+	else 
+	{
+		hero->onGround = false;
+		hero->isJumping = true;
+	}
 	if (hero->dx > 0 and (CURRENT_MAP.intersects_with_type(hero->x + hero->width, hero->y + 2.0f, Texture_Type::COLLIDABLE_TILE)
 		or CURRENT_MAP.intersects_with_type(hero->x + hero->width, hero->y + hero->height - 2.0f, Texture_Type::COLLIDABLE_TILE)))
 	{
@@ -83,11 +97,7 @@ void Engine::check_collisions()
 	{
 		hero->dx = 0;
 	}
-	if (hero->dy > 0 and (CURRENT_MAP.intersects_with_type(hero->x + 2.0f, hero->y + hero->height, Texture_Type::COLLIDABLE_TILE)
-		or CURRENT_MAP.intersects_with_type(hero->x + hero->width - 2.0f, hero->y + hero->height, Texture_Type::COLLIDABLE_TILE)))
-	{
-		hero->dy = 0;
-	}
+	
 	if (hero->dy < 0 and (CURRENT_MAP.intersects_with_type(hero->x + 2.0f, hero->y, Texture_Type::COLLIDABLE_TILE)
 		or CURRENT_MAP.intersects_with_type(hero->x + hero->width - 2.0f, hero->y, Texture_Type::COLLIDABLE_TILE)))
 	{
@@ -95,22 +105,32 @@ void Engine::check_collisions()
 	}
 }
 
-void Engine::loop(sf::RenderWindow& window, float& timer)
+void Engine::game_loop(sf::RenderWindow& window, float& timer)
 {
-	levels[current_level].draw_map(window);
 	hero->draw(window);
 	hero->draw_hitbox(window);
-	
+	hero->draw_health(window);
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::F1))
+	{
+		hero->take_damage(1.0f);
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::F2))
+	{
+		hero->heal(1.0f);
+	}
+
 	hero->control(timer);
 	check_collisions();
+	hero->apply_gravity(timer);
 	hero->move(timer);
-	
-	//hero->apply_gravity(timer);
-	
-	//player->move(timer, levels[current_level]);
-	//set_view();
-	//player->draw(window);
 }
+
+void Engine::map_loop(sf::RenderWindow& window)
+{
+	CURRENT_MAP.draw_map(window);
+}
+
 
 Engine::~Engine()
 {

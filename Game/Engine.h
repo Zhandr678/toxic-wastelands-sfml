@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "Map.h"
 #include "Entity.h"
+#include "HealthBar.h"
 
 class Map;
 class Layer;
@@ -15,10 +16,11 @@ class TextureManager;
 class EntityManager;
 class Block;
 class Entity;
+class HealthBar;
 
 class Engine
 {
-public:
+private:
 	TextureManager* texture_manager;
 	//EntityManager* entity_manager;
 	//Player* player;
@@ -39,7 +41,8 @@ public:
 	//void set_view();
 	//void set_focus_on_map(uint16_t id);
 	void check_collisions();
-	void loop(sf::RenderWindow& window, float& timer);
+	void game_loop(sf::RenderWindow& window, float& timer);
+	void map_loop(sf::RenderWindow& window);
 
 	~Engine();
 };
