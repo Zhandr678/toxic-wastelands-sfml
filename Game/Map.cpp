@@ -7,6 +7,10 @@ Map::Map(std::vector<Layer> grid, std::string background_file) :
 	this->background_texture.loadFromImage(this->background_image);
 	this->background_sprite.setTexture(this->background_texture);
 	this->background_sprite.setPosition(0.0f, 0.0f);
+
+	this->x_left_boundary = this->y_top_boundary = 0.0f;
+	this->x_right_boundary = static_cast <float> (grid[0].get_size().first * TILE_SIZE);
+	this->y_bottom_boundary = static_cast <float> (grid[0].get_size().second * TILE_SIZE);
 }
 
 Map::Map(const Map& other)
@@ -16,6 +20,10 @@ Map::Map(const Map& other)
 	this->background_texture.loadFromImage(this->background_image);
 	this->background_sprite.setTexture(this->background_texture);
 	this->background_sprite.setPosition(0.0f, 0.0f);
+
+	this->x_left_boundary = this->y_top_boundary = 0.0f;
+	this->x_right_boundary = static_cast <float> (grid[0].get_size().first * TILE_SIZE);
+	this->y_bottom_boundary = static_cast <float> (grid[0].get_size().second * TILE_SIZE);
 }
 
 Map& Map::operator=(const Map& other)
@@ -27,6 +35,10 @@ Map& Map::operator=(const Map& other)
 		this->background_texture.loadFromImage(this->background_image);
 		this->background_sprite.setTexture(this->background_texture);
 		this->background_sprite.setPosition(0, 0);
+
+		this->x_left_boundary = this->y_top_boundary = 0.0f;
+		this->x_right_boundary = static_cast <float> (grid[0].get_size().first * TILE_SIZE);
+		this->y_bottom_boundary = static_cast <float> (grid[0].get_size().second * TILE_SIZE);
 	}
 	return *this;
 }

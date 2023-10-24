@@ -39,7 +39,7 @@ void Entity::control(float time)
 		sprite.setTextureRect(sf::IntRect(48 * static_cast <int>(this->current_frame), 35, this->width, this->height));
 		key_pressed = true;
 	}
-	
+
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 	{
 		this->dy = -1 * this->speed;
@@ -108,7 +108,7 @@ void Entity::heal(float amount)
 	this->hp = std::min(this->hp, this->MAX_HP);
 }
 
-void Entity::apply_gravity(float time)
+void Entity::apply_gravity(float& time)
 {
 	this->dy += this->gravity * time;
 }

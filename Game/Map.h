@@ -16,6 +16,8 @@ public:
 	sf::Image background_image;
 	sf::Texture background_texture;
 	sf::Sprite background_sprite;
+	float x_left_boundary, x_right_boundary;
+	float y_top_boundary, y_bottom_boundary;
 public:
 	friend class Engine;
 	Map(std::vector <Layer> grid, std::string background_file);

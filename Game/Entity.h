@@ -21,7 +21,7 @@ private:
 	float x, y, dx = 0, dy = 0, height, width;
 	float speed, hp, current_frame = 0;
 	float gravity = DEFAULT_GRAVITY;
-	bool isAlive = true, facing_right = true, onGround = false;
+	bool isAlive = true, facing_right = true, onGround = false, isJumping = false;
 	State state = State::IDLE;
 	sf::FloatRect hitbox;
 public:
@@ -36,7 +36,8 @@ public:
 	void change_position(float x, float y);
 	void take_damage(float amount);
 	void heal(float amount);
-	void apply_gravity(float time);
+	void apply_gravity(float& time);
+	void adjust_position();
 	bool hitbox_intersects(sf::FloatRect other);
 	bool is_alive();
 

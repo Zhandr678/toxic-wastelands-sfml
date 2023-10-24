@@ -44,7 +44,14 @@ Texture_Type Layer::get_type() const
 bool Layer::intersects_hitbox_grid(float x, float y) const
 {
 	int index_y = y / TILE_SIZE, index_x = x / TILE_SIZE;
-	return this->grid[index_y + 1][index_x];
+
+	if (index_x < 0 or index_y + 1 < 0 or index_x >= grid[0].size() or index_y + 1 >= grid.size()) { return true; }
+	else { return this->grid[index_y + 1][index_x]; }
+}
+
+std::pair<uint16_t, uint16_t> Layer::get_size() const
+{
+	return std::pair<uint16_t, uint16_t>(horizontal_size, vertical_size);
 }
 
 Layer::~Layer() {}

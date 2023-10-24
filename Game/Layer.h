@@ -23,6 +23,7 @@ public:
 	void draw_layer(sf::RenderWindow& window) const;
 	Texture_Type get_type() const;
 	bool intersects_hitbox_grid(float x, float y) const;
+	std::pair <uint16_t, uint16_t> get_size() const;
 
 	~Layer();
 };

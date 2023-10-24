@@ -35,7 +35,7 @@ int main(int argc, char **argv)
 		{
 			if (e.type == e.Closed) { window.close(); }
 		}
-
+		
 		engine.loop(window, timer);
 		
 		window.display();

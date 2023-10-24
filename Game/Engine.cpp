@@ -73,7 +73,7 @@ void Engine::create_entity(std::string entity_texture_path, bool is_playable)
 
 void Engine::check_collisions()
 {
-	if (hero->dx > 0 and (CURRENT_MAP.intersects_with_type(hero->x + hero->width, hero->y + 2.0f, Texture_Type::COLLIDABLE_TILE) 
+	if (hero->dx > 0 and (CURRENT_MAP.intersects_with_type(hero->x + hero->width, hero->y + 2.0f, Texture_Type::COLLIDABLE_TILE)
 		or CURRENT_MAP.intersects_with_type(hero->x + hero->width, hero->y + hero->height - 2.0f, Texture_Type::COLLIDABLE_TILE)))
 	{
 		hero->dx = 0;
@@ -100,9 +100,13 @@ void Engine::loop(sf::RenderWindow& window, float& timer)
 	levels[current_level].draw_map(window);
 	hero->draw(window);
 	hero->draw_hitbox(window);
+	
 	hero->control(timer);
 	check_collisions();
 	hero->move(timer);
+	
+	//hero->apply_gravity(timer);
+	
 	//player->move(timer, levels[current_level]);
 	//set_view();
 	//player->draw(window);
