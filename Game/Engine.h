@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "Map.h"
 #include "Entity.h"
+#include "Menu.h"
 
 class Map;
 class Layer;
@@ -15,16 +16,19 @@ class TextureManager;
 class EntityManager;
 class Block;
 class Entity;
+class Menu;
 
 class Engine
 {
-public:
+private:
+
+	Menu* menu;
 	TextureManager* texture_manager;
 	//EntityManager* entity_manager;
 	//Player* player;
 	Entity* hero;
 	std::vector <Map> levels;
-	uint16_t current_level;
+	uint16_t current_level;	
 	//sf::View view;
 	//sf::Image gameover;
 	void create_map(std::string path, std::string background_path);
@@ -38,8 +42,10 @@ public:
 	
 	//void set_view();
 	//void set_focus_on_map(uint16_t id);
+	std::string gameState = "menu";
 	void check_collisions();
 	void loop(sf::RenderWindow& window, float& timer);
+	void menu_loop(sf::RenderWindow& window, float& timer);
 
 	~Engine();
 };

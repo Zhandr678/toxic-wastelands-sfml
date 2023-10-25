@@ -4,6 +4,7 @@
 #include <nlohmann/json.hpp>
 
 #include "Engine.h"
+#include "Menu.h"
 
 std::string solution_directory(char** argv)
 {
@@ -36,8 +37,16 @@ int main(int argc, char **argv)
 			if (e.type == e.Closed) { window.close(); }
 		}
 
-		engine.loop(window, timer);
-		
+		if (engine.gameState == "menu" || engine.gameState == "death")
+		{
+			window.clear();
+			engine.menu_loop(window, timer);
+		}
+		if (engine.gameState == "game")
+		{
+			window.clear();
+			engine.loop(window, timer);
+		}
 		window.display();
 	}
 }

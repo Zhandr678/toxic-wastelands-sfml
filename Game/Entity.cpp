@@ -15,8 +15,19 @@ Entity::Entity(uint16_t id, std::string path, float x, float y, float speed, flo
 
 void Entity::control(float time)
 {
-	if (!this->facing_right) { sprite.setScale(-1.0f, 1.0f); } // Mirror horizontally
-	else { sprite.setScale(1.0f, 1.0f); } // Reset to normal
+	if (!this->facing_right) {
+		sf::Vector2f currentPosition = sprite.getPosition();
+		sprite.setOrigin(sprite.getLocalBounds().width, 0);
+		sprite.setScale({ -1, 1 });
+		sprite.setPosition(currentPosition);
+	}
+	else {
+		// Set the origin back to the default (left side of the sprite)
+		sprite.setOrigin(0, 0);
+
+		// Reset the scale to normal
+		sprite.setScale({ 1, 1 });
+	}
 
 	bool key_pressed = false;
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
@@ -26,17 +37,17 @@ void Entity::control(float time)
 		this->current_frame += 0.005 * time;
 		this->facing_right = true;
 		if (this->current_frame > 6) { current_frame -= 6; }
-		sprite.setTextureRect(sf::IntRect(48 * static_cast <int>(this->current_frame), 33, this->width, this->height));
+		sprite.setTextureRect(sf::IntRect(48 * static_cast <int>(this->current_frame), 34, this->width, this->height));
 		key_pressed = true;
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
 		this->dx = -1 * this->speed;
 		this->state = State::MOVING_LEFT;
-		this->current_frame += 0.005 * time;
+		this->current_frame += 0.005 * time;	
 		this->facing_right = false;
 		if (this->current_frame > 6) { current_frame -= 6; }
-		sprite.setTextureRect(sf::IntRect(48 * static_cast <int>(this->current_frame), 33, this->width, this->height));
+		sprite.setTextureRect(sf::IntRect(48 * static_cast <int>(this->current_frame), 34, this->width, this->height));
 		key_pressed = true;
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
