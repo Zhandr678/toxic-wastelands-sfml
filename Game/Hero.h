@@ -22,7 +22,5 @@ public:
 
 	virtual void take_damage(float amount) override;
 	virtual void heal(float amount) override;
-
-
 };
 

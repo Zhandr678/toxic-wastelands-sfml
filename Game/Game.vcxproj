@@ -26,6 +26,7 @@
     <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="HealthBar.cpp" />
     <ClCompile Include="Hero.cpp" />
+    <ClCompile Include="NPC.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Layer.cpp" />
@@ -42,6 +43,7 @@
     <ClInclude Include="FileManager.h" />
     <ClInclude Include="HealthBar.h" />
     <ClInclude Include="Hero.h" />
+    <ClInclude Include="NPC.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="EntityManager.h" />
     <ClInclude Include="Layer.h" />

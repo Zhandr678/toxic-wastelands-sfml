@@ -32,46 +32,45 @@ void Entity::apply_gravity(float& time)
 
 void Entity::collisions(const Map& map)
 {
-	sf::Vector2f pos = this->get_position(), size = this->get_size();
-	if (this->get_dy() > 0 and (map.intersects_with_type(pos.x + 2.0f, pos.y + size.y + 1.8 * this->get_dy(), Texture_Type::COLLIDABLE_TILE)
-		or map.intersects_with_type(pos.x + size.x - 2.0f, pos.y + size.y + 1.8 * this->get_dy(), Texture_Type::COLLIDABLE_TILE)))
+	if (this->dy > 0 and (map.intersects_with_type(this->x + 2.0f, this->y + this->height + 1.8 * this->dy, Texture_Type::COLLIDABLE_TILE)
+		or map.intersects_with_type(this->x + this->width - 2.0f, this->y + this->height + 1.8 * this->dy, Texture_Type::COLLIDABLE_TILE)))
 	{
-		std::cout << this->get_dy() << " ";
-		if (this->get_dy() > UNHARMFUL_Y_SPEED)
+		std::cout << this->dy << " ";
+		if (this->dy > UNHARMFUL_Y_SPEED)
 		{
-			float damage = DAMAGE_RATE_PER_SPEED * pow(this->get_dy(), DAMAGE_POWER_PER_SPEED);
+			float damage = DAMAGE_RATE_PER_SPEED * pow(this->dy, DAMAGE_POWER_PER_SPEED);
 			this->take_damage(damage);
 			std::cout << damage << "\n";
 		}
-		if (this->get_dy() < 0.5) { this->set_dy(0); }
-		this->set_dy(this->get_dy() - 0.8 * this->get_dy());
+		if (this->dy < 0.5) { this->dy = 0; }
+		this->dy -= 0.8 * this->dy;
 	}
-	if ((map.intersects_with_type(pos.x + 2.0f, pos.y + size.y, Texture_Type::COLLIDABLE_TILE)
-		or map.intersects_with_type(pos.x + size.x - 2.0f, pos.y + size.y, Texture_Type::COLLIDABLE_TILE)))
+	if ((map.intersects_with_type(this->x + 2.0f, this->y + this->height, Texture_Type::COLLIDABLE_TILE)
+		or map.intersects_with_type(this->x + this->width - 2.0f, this->y + this->height, Texture_Type::COLLIDABLE_TILE)))
 	{
-		this->set_on_ground(true);
-		this->set_jumping(false);
+		this->set_on_ground();
+		this->set_not_jumping();
 	}
 	else
 	{
-		this->set_on_ground(false);
-		this->set_jumping(true);
+		this->set_off_ground();
+		this->set_jumping();
 	}
-	if (this->get_dx() > 0 and (map.intersects_with_type(pos.x + size.x, pos.y + 2.0f, Texture_Type::COLLIDABLE_TILE)
-		or map.intersects_with_type(pos.x + size.x, pos.y + size.y - 2.0f, Texture_Type::COLLIDABLE_TILE)))
+	if (this->dx > 0 and (map.intersects_with_type(this->x + this->width, this->y + 2.0f, Texture_Type::COLLIDABLE_TILE)
+		or map.intersects_with_type(this->x + this->width, this->y + this->height - 2.0f, Texture_Type::COLLIDABLE_TILE)))
 	{
-		this->set_dx(0);
+		this->dx = 0;
 	}
-	if (this->get_dx() < 0 and (map.intersects_with_type(pos.x, pos.y + 2.0f, Texture_Type::COLLIDABLE_TILE)
-		or map.intersects_with_type(pos.x, pos.y + size.y - 2.0f, Texture_Type::COLLIDABLE_TILE)))
+	if (this->dx < 0 and (map.intersects_with_type(this->x, this->y + 2.0f, Texture_Type::COLLIDABLE_TILE)
+		or map.intersects_with_type(this->x, this->y + this->height - 2.0f, Texture_Type::COLLIDABLE_TILE)))
 	{
-		this->set_dx(0);
+		this->dx = 0;
 	}
 
-	if (this->get_dy() < 0 and (map.intersects_with_type(pos.x + 2.0f, pos.y, Texture_Type::COLLIDABLE_TILE)
-		or map.intersects_with_type(pos.x + size.x - 2.0f, pos.y, Texture_Type::COLLIDABLE_TILE)))
+	if (this->dy < 0 and (map.intersects_with_type(this->x + 2.0f, this->y, Texture_Type::COLLIDABLE_TILE)
+		or map.intersects_with_type(this->x + this->width - 2.0f, this->y, Texture_Type::COLLIDABLE_TILE)))
 	{
-		this->set_dy(0);
+		this->dy = 0;
 	}
 }
 
@@ -117,49 +116,29 @@ bool Entity::is_on_ground() const
 	return this->onGround;
 }
 
-bool Entity::is_facing_right() const
+void Entity::set_on_ground()
 {
-	return facing_right;
+	this->onGround = true;
 }
 
-bool Entity::is_facing_left() const
+void Entity::set_off_ground()
 {
-	return !facing_right;
+	this->onGround = false;
 }
 
-void Entity::set_on_ground(bool is)
+void Entity::set_jumping()
 {
-	this->onGround = is;
+	this->isJumping = true;
 }
 
-void Entity::set_jumping(bool is)
+void Entity::set_not_jumping()
 {
-	this->isJumping = is;
-}
-
-float Entity::get_dx() const
-{
-	return this->dx;
-}
-
-float Entity::get_dy() const
-{
-	return this->dy;
+	this->isJumping = false;
 }
 
 sf::Vector2f Entity::get_size() const
 {
 	return sf::Vector2f(this->width, this->height);
-}
-
-void Entity::set_dy(float speed)
-{
-	this->dy = speed;
-}
-
-void Entity::set_dx(float speed)
-{
-	this->dx = speed;
 }
 
 float Entity::get_gravity_value() const
@@ -177,39 +156,19 @@ float Entity::get_current_frame() const
 	return this->current_frame;
 }
 
+void Entity::frame_move(float& time)
+{
+	this->current_frame += 0.005 * time;
+}
+
+void Entity::frame_clear()
+{
+	this->current_frame = 0.0f;
+}
+
 sf::Vector2f Entity::get_position() const
 {
 	return sf::Vector2f(this->x, this->y);
-}
-
-Entity_State Entity::get_state() const
-{
-	return this->state;
-}
-
-void Entity::set_state(Entity_State state)
-{
-	this->state = state;
-}
-
-void Entity::set_facing_right(bool is)
-{
-	this->facing_right = is;
-}
-
-sf::Sprite& Entity::this_sprite()
-{
-	return this->sprite;
-}
-
-HealthBar* Entity::this_HPBar()
-{
-	return this->HPBar;
-}
-
-void Entity::frame_move_by(float val)
-{
-	current_frame += val;
 }
 
 void Entity::init_HPBar(float x, float y, float length, float height, HPBar_Display format, sf::Color color, float MAX_HP, float HP)
