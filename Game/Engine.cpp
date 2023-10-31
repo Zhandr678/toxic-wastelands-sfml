@@ -1,9 +1,11 @@
 #include "Engine.h"
 #define CURRENT_MAP this->levels[this->current_level]
 
-Engine::Engine(char** argv, std::string maps_folder_path)
+Engine::Engine(char** argv)
 {
+	this->file_manager = new FileManager(argv);
 	this->texture_manager = new TextureManager(argv);
+
 	this->hero = new Hero(1, "C:/Users/Home/source/repos/Game/Textures/Character_Textures/Biker/biker.png", 32, 325, 34, 32);
 	this->enemy = new NPC(2, "C:/Users/Home/source/repos/Game/Textures/Character_Textures/Biker/biker.png", 550, 20, 34, 32);
 	//this->anime = AnimatedObject(500, 100, "C:/Users/Home/source/repos/Game/Textures/Map_Textures/Animated objects/Trap.png", 32, 48, 4);
@@ -11,7 +13,7 @@ Engine::Engine(char** argv, std::string maps_folder_path)
 
 	try
 	{
-		for (const auto& entry : std::filesystem::directory_iterator(maps_folder_path))
+		for (const auto& entry : std::filesystem::directory_iterator(file_manager->maps_directory()))
 		{
 			if (std::filesystem::is_regular_file(entry) and entry.path().extension() == ".json")
 			{
@@ -119,5 +121,5 @@ void Engine::map_loop(sf::RenderWindow& window)
 
 Engine::~Engine()
 {
-	delete this->texture_manager, this->hero;
+	delete this->texture_manager, this->hero, this->enemy, this->file_manager;
 }

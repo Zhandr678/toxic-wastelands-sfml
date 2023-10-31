@@ -12,6 +12,7 @@
 #include "AnimatedObject.h"
 #include "Hero.h"
 #include "NPC.h";
+#include "FileManager.h"
 
 class Map;
 class Layer;
@@ -27,6 +28,7 @@ class Engine
 {
 private:
 	TextureManager* texture_manager;
+	FileManager* file_manager;
 	//AnimatedObject anime;
 	//EntityManager* entity_manager;
 	//Player* player;
@@ -40,7 +42,7 @@ private:
 	//void collision();
 public:
 	Engine() = delete;
-	Engine(char** argv, std::string maps_folder_path);
+	Engine(char** argv);
 	//Engine(std::string saved_file);
 	Engine(const Engine& other) = delete;
 
