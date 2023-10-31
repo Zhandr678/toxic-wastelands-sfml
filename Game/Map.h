@@ -11,7 +11,7 @@
 
 class Map
 {
-public:
+private:
 	std::vector <Layer> grid;
 	sf::Image background_image;
 	sf::Texture background_texture;
@@ -24,7 +24,7 @@ public:
 	Map(const Map& other);
 	Map& operator =(const Map& other);
 
-	bool intersects_with_type(float x, float y, Texture_Type type);
+	bool intersects_with_type(float x, float y, Texture_Type type) const;
 	void draw_map(sf::RenderWindow& window);
 
 	~Map() {};

@@ -4,8 +4,8 @@
 Engine::Engine(char** argv, std::string maps_folder_path)
 {
 	this->texture_manager = new TextureManager(argv);
-	this->hero = new Entity(1, "C:/Users/Home/source/repos/Game/Textures/Character_Textures/Biker/biker.png", 32, 325, 34, 32);
-
+	this->hero = new Hero(1, "C:/Users/Home/source/repos/Game/Textures/Character_Textures/Biker/biker.png", 32, 325, 34, 32);
+	//this->anime = AnimatedObject(500, 100, "C:/Users/Home/source/repos/Game/Textures/Map_Textures/Animated objects/Trap.png", 32, 48, 4);
 	this->current_level = 0;
 
 	try
@@ -71,43 +71,7 @@ void Engine::create_entity(std::string entity_texture_path, bool is_playable)
 
 void Engine::check_collisions()
 {
-	if (hero->dy > 0 and (CURRENT_MAP.intersects_with_type(hero->x + 2.0f, hero->y + hero->height, Texture_Type::COLLIDABLE_TILE)
-		or CURRENT_MAP.intersects_with_type(hero->x + hero->width - 2.0f, hero->y + hero->height, Texture_Type::COLLIDABLE_TILE)))
-	{
-		if (hero->dy > UNHARMFUL_Y_SPEED) 
-		{  
-			float damage = DAMAGE_RATE_PER_SPEED * pow(hero->dy, DAMAGE_POWER_PER_SPEED);
-			hero->take_damage(damage);
-		}
-		hero->dy = 0;
-	}
-	if ((CURRENT_MAP.intersects_with_type(hero->x + 2.0f, hero->y + hero->height, Texture_Type::COLLIDABLE_TILE)
-		or CURRENT_MAP.intersects_with_type(hero->x + hero->width - 2.0f, hero->y + hero->height, Texture_Type::COLLIDABLE_TILE)))
-	{
-		hero->onGround = true;
-		hero->isJumping = false;
-	}
-	else 
-	{
-		hero->onGround = false;
-		hero->isJumping = true;
-	}
-	if (hero->dx > 0 and (CURRENT_MAP.intersects_with_type(hero->x + hero->width, hero->y + 2.0f, Texture_Type::COLLIDABLE_TILE)
-		or CURRENT_MAP.intersects_with_type(hero->x + hero->width, hero->y + hero->height - 2.0f, Texture_Type::COLLIDABLE_TILE)))
-	{
-		hero->dx = 0;
-	}
-	if (hero->dx < 0 and (CURRENT_MAP.intersects_with_type(hero->x, hero->y + 2.0f, Texture_Type::COLLIDABLE_TILE)
-		or CURRENT_MAP.intersects_with_type(hero->x, hero->y + hero->height - 2.0f, Texture_Type::COLLIDABLE_TILE)))
-	{
-		hero->dx = 0;
-	}
-	
-	if (hero->dy < 0 and (CURRENT_MAP.intersects_with_type(hero->x + 2.0f, hero->y, Texture_Type::COLLIDABLE_TILE)
-		or CURRENT_MAP.intersects_with_type(hero->x + hero->width - 2.0f, hero->y, Texture_Type::COLLIDABLE_TILE)))
-	{
-		hero->dy = 0;
-	}
+	hero->collisions(CURRENT_MAP);
 }
 
 void Engine::game_loop(sf::RenderWindow& window, float& timer)
@@ -118,11 +82,11 @@ void Engine::game_loop(sf::RenderWindow& window, float& timer)
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::F1))
 	{
-		hero->take_damage(1.0f);
+		hero->take_damage(0.5f);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::F2))
 	{
-		hero->heal(1.0f);
+		hero->heal(0.5f);
 	}
 
 	hero->control(timer);
@@ -134,6 +98,7 @@ void Engine::game_loop(sf::RenderWindow& window, float& timer)
 void Engine::map_loop(sf::RenderWindow& window)
 {
 	CURRENT_MAP.draw_map(window);
+	//anime.draw(window);
 }
 
 

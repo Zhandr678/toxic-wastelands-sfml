@@ -9,6 +9,8 @@
 #include "Map.h"
 #include "Entity.h"
 #include "HealthBar.h"
+#include "AnimatedObject.h"
+#include "Hero.h"
 
 class Map;
 class Layer;
@@ -17,11 +19,14 @@ class EntityManager;
 class Block;
 class Entity;
 class HealthBar;
+class AnimatedObject;
+class Hero;
 
 class Engine
 {
 private:
 	TextureManager* texture_manager;
+	//AnimatedObject anime;
 	//EntityManager* entity_manager;
 	//Player* player;
 	Entity* hero;
@@ -37,7 +42,7 @@ public:
 	Engine(char** argv, std::string maps_folder_path);
 	//Engine(std::string saved_file);
 	Engine(const Engine& other) = delete;
-	
+
 	//void set_view();
 	//void set_focus_on_map(uint16_t id);
 	void check_collisions();

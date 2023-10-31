@@ -52,7 +52,7 @@ void Map::draw_map(sf::RenderWindow& window)
 	}
 }
 
-bool Map::intersects_with_type(float x, float y, Texture_Type type)
+bool Map::intersects_with_type(float x, float y, Texture_Type type) const
 {
 	for (const Layer& layer : grid)
 	{

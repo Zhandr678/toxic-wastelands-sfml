@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AnimatedObject.cpp" />
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Entity.cpp" />
@@ -29,9 +30,11 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Layer.cpp" />
     <ClCompile Include="Map.cpp" />
+    <ClCompile Include="Settings.cpp" />
     <ClCompile Include="TextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AnimatedObject.h" />
     <ClInclude Include="Block.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Engine.h" />
@@ -43,6 +46,7 @@
     <ClInclude Include="EntityManager.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="Settings.h" />
     <ClInclude Include="TextureManager.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

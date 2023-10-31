@@ -15,7 +15,7 @@ std::string solution_directory(char** argv)
 
 int main(int argc, char** argv)
 {
-    sf::RenderWindow window(sf::VideoMode(WINDOW_LENGTH, WINDOW_HEIGHT), "Toxic Wastelands", sf::Style::Close | sf::Style::Titlebar);
+    sf::RenderWindow window(sf::VideoMode(WINDOW_LENGTH, WINDOW_HEIGHT), "Toxic Wastelands", sf::Style::Close | sf::Style::Titlebar | sf::Style::Resize);
 
     const std::string solution_dir = solution_directory(argv);
     const std::string maps_dir = solution_dir + "/maps";
