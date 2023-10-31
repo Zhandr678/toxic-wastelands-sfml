@@ -10,7 +10,6 @@ Entity::Entity(uint16_t id, std::string path, float x, float y, float height, fl
 	this->sprite.setTexture(this->texture);
 	this->sprite.setTextureRect(sf::IntRect(48 * static_cast <int>(this->current_frame), 4, this->width, this->height));
 	this->sprite.setPosition(this->x, this->y);
-	this->HPBar = new HealthBar(5.0f, 5.0f, 96.0f, 16.0f, HPBar_Display::FIXED);
 }
 
 void Entity::move(float& time)

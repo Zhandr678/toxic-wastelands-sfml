@@ -5,6 +5,7 @@ Engine::Engine(char** argv, std::string maps_folder_path)
 {
 	this->texture_manager = new TextureManager(argv);
 	this->hero = new Hero(1, "C:/Users/Home/source/repos/Game/Textures/Character_Textures/Biker/biker.png", 32, 325, 34, 32);
+	this->enemy = new NPC(2, "C:/Users/Home/source/repos/Game/Textures/Character_Textures/Biker/biker.png", 550, 20, 34, 32);
 	//this->anime = AnimatedObject(500, 100, "C:/Users/Home/source/repos/Game/Textures/Map_Textures/Animated objects/Trap.png", 32, 48, 4);
 	this->current_level = 0;
 
@@ -72,6 +73,7 @@ void Engine::create_entity(std::string entity_texture_path, bool is_playable)
 void Engine::check_collisions()
 {
 	hero->collisions(CURRENT_MAP);
+	enemy->collisions(CURRENT_MAP);
 }
 
 void Engine::game_loop(sf::RenderWindow& window, float& timer)
@@ -79,6 +81,16 @@ void Engine::game_loop(sf::RenderWindow& window, float& timer)
 	hero->draw(window);
 	hero->draw_hitbox(window);
 	hero->draw_health(window);
+
+	enemy->draw(window);
+	enemy->draw_hitbox(window);
+	enemy->draw_health(window);
+	
+	if (NPC* npc = dynamic_cast <NPC*>(enemy))
+	{
+		npc->draw_hearing_circle(window);
+		npc->draw_seeing_lines(window);
+	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::F1))
 	{
@@ -89,9 +101,12 @@ void Engine::game_loop(sf::RenderWindow& window, float& timer)
 		hero->heal(0.5f);
 	}
 
+	enemy->control(timer);
 	hero->control(timer);
 	check_collisions();
+	enemy->apply_gravity(timer);
 	hero->apply_gravity(timer);
+	enemy->move(timer);
 	hero->move(timer);
 }
 

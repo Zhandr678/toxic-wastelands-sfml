@@ -11,6 +11,7 @@
 #include "HealthBar.h"
 #include "AnimatedObject.h"
 #include "Hero.h"
+#include "NPC.h";
 
 class Map;
 class Layer;
@@ -29,7 +30,7 @@ private:
 	//AnimatedObject anime;
 	//EntityManager* entity_manager;
 	//Player* player;
-	Entity* hero;
+	Entity* hero, *enemy;
 	std::vector <Map> levels;
 	uint16_t current_level;
 	//sf::View view;

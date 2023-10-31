@@ -3,6 +3,7 @@
 Hero::Hero(uint16_t id, std::string path, float x, float y, float height, float width, float speed, float MAX_HP, float hp) :
 	Entity(id, path, x, y, height, width, speed, MAX_HP, hp)
 {
+	this->HPBar = new HealthBar(5.0f, 5.0f, 96.0f, 16.0f, HPBar_Display::FIXED);
 	this->movement = Settings();
 }
 
