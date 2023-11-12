@@ -43,6 +43,16 @@ Map& Map::operator=(const Map& other)
 	return *this;
 }
 
+sf::Vector2f Map::get_y_boundaries() const
+{
+	return sf::Vector2f(y_top_boundary, y_bottom_boundary);
+}
+
+sf::Vector2f Map::get_x_boundaries() const
+{
+	return sf::Vector2f(x_left_boundary, x_right_boundary);
+}
+
 void Map::draw_map(sf::RenderWindow& window)
 {
 	window.draw(this->background_sprite);

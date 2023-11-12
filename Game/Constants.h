@@ -18,12 +18,17 @@ enum class HPBar_Display
     FIXED, ABSOLUTE, BOUND
 };
 
+enum class EntityGroup
+{
+    PC, NPC
+};
+
 constexpr size_t TIME_SCALING = 800;
 constexpr size_t TILE_SIZE = 32;
-constexpr size_t MAX_BLOCKS_HORIZONTAL = 32;
-constexpr size_t MAX_BLOCKS_VERTICAL = 20;
-constexpr size_t WINDOW_LENGTH = 1000;
-constexpr size_t WINDOW_HEIGHT = 600;
+constexpr size_t MAX_BLOCKS_HORIZONTAL = 60;
+constexpr size_t MAX_BLOCKS_VERTICAL = 15;
+constexpr float WINDOW_LENGTH = 1000.0f;
+constexpr float WINDOW_HEIGHT = 600.0f;
 
 constexpr float DEFAULT_SPEED = 0.15f;
 constexpr float DEFAULT_GRAVITY = 0.0015f;
@@ -36,4 +41,4 @@ constexpr float DAMAGE_POWER_PER_SPEED = 4.5357f;
 const std::string NON_COLLIDABLE_TILE = "notCollidable-tile";
 const std::string NON_COLLIDABLE_OBJ = "notCollidable-obj";
 const std::string COLLIDABLE_TILE = "collidable-tile";
-const std::string BACKGROUND = "C:/Users/Home/source/repos/Game/Textures/Map_Textures/Background/background.png";
+const std::string BACKGROUND = "C:/Users/Home/source/repos/Game/Textures/Map_Textures/Background/map";

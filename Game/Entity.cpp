@@ -8,16 +8,27 @@ Entity::Entity(uint16_t id, std::string path, float x, float y, float height, fl
 	this->image.createMaskFromColor(sf::Color::White);
 	this->texture.loadFromImage(this->image);
 	this->sprite.setTexture(this->texture);
-	this->sprite.setTextureRect(sf::IntRect(48 * static_cast <int>(this->current_frame), 4, this->width, this->height));
+	this->sprite.setTextureRect(sf::IntRect(48 * static_cast <int>(this->current_frame), 0, this->width, this->height));
 	this->sprite.setPosition(this->x, this->y);
 }
 
 void Entity::move(float& time)
 {
+	if (!is_alive()) { return; }
 	this->x += this->dx * time;
 	this->y += this->dy * time;
 
 	this->change_position(x, y);
+	this->HPBar->move(this->x - 10.0f, this->y - 10.0f, false);
+}
+
+void Entity::attack(float& time)
+{
+	isAttacking = true;
+	float temp = 1.2 * time;
+	this->frame_move(temp);
+	if (get_current_frame() >= 6) { isAttacking = false; this->set_frame(0); }
+	this->sprite.setTextureRect(sf::IntRect(48 * static_cast <int>(this->get_current_frame()), 179, this->get_size().x, this->get_size().y));
 }
 
 void Entity::apply_gravity(float& time)
@@ -29,17 +40,15 @@ void Entity::apply_gravity(float& time)
 	}
 }
 
-void Entity::collisions(const Map& map)
+void Entity::collisions(const Map& map, float& time)
 {
 	if (this->dy > 0 and (map.intersects_with_type(this->x + 2.0f, this->y + this->height + 1.8 * this->dy, Texture_Type::COLLIDABLE_TILE)
 		or map.intersects_with_type(this->x + this->width - 2.0f, this->y + this->height + 1.8 * this->dy, Texture_Type::COLLIDABLE_TILE)))
 	{
-		std::cout << this->dy << " ";
 		if (this->dy > UNHARMFUL_Y_SPEED)
 		{
 			float damage = DAMAGE_RATE_PER_SPEED * pow(this->dy, DAMAGE_POWER_PER_SPEED);
-			this->take_damage(damage);
-			std::cout << damage << "\n";
+			this->take_damage(damage, time);
 		}
 		if (this->dy < 0.5) { this->dy = 0; }
 		this->dy -= 0.8 * this->dy;
@@ -73,6 +82,21 @@ void Entity::collisions(const Map& map)
 	}
 }
 
+void Entity::die(float& time)
+{
+	this->isAlive = false;
+	this->dying = true;
+}
+
+void Entity::play_dying_animation(float& time)
+{
+	if (!dying) { return; }
+	float temp = 0.5 * time;
+	this->frame_move(temp);
+	if (get_current_frame() >= 5) { dying = false; set_frame(5); }
+	this->sprite.setTextureRect(sf::IntRect(48 * static_cast <int>(this->get_current_frame()), 128, this->get_size().x, this->get_size().y));
+}
+
 void Entity::draw_hitbox(sf::RenderWindow& window)
 {
 	sf::RectangleShape rect;
@@ -88,6 +112,7 @@ void Entity::change_position(float x, float y)
 {
 	this->x = x; this->y = y;
 	this->sprite.setPosition(this->x, this->y);
+	this->HPBar->move(this->x - 10.0f, this->y - 10.0f, false);
 }
 
 void Entity::draw(sf::RenderWindow& window)
@@ -163,6 +188,16 @@ void Entity::frame_move(float& time)
 void Entity::frame_clear()
 {
 	this->current_frame = 0.0f;
+}
+
+void Entity::set_frame(float value)
+{
+	this->current_frame = value;
+}
+
+bool Entity::is_dying() const
+{
+	return dying;
 }
 
 sf::Vector2f Entity::get_position() const

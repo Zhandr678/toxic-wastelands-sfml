@@ -11,12 +11,12 @@ AnimatedObject::AnimatedObject(float x, float y, std::string file_path, float wi
 	this->sprite.setPosition(this->x, this->y);
 }
 
-void AnimatedObject::draw(sf::RenderWindow& window)
+void AnimatedObject::draw(sf::RenderWindow& window, float& timer)
 {
-	if (this->current_frame == this->num_of_frames - 1) { this->current_frame = 0; }
-	this->current_frame++;
+	if (this->current_frame >= this->num_of_frames) { this->current_frame = 0; }
+	this->current_frame += 0.005 * timer;
 
-	this->sprite.setTextureRect(sf::IntRect(static_cast <int>(this->width) * current_frame, 0, this->width, this->height));
+	this->sprite.setTextureRect(sf::IntRect(static_cast <int>(this->width) * static_cast <int>(current_frame), 0, this->width, this->height));
 	window.draw(this->sprite);
 }
 

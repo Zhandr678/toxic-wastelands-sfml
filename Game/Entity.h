@@ -6,20 +6,25 @@
 #include "HealthBar.h"
 #include "Map.h"
 
+class Engine;
+
 class Entity
 {
 private:
+	friend class Engine;
 	uint16_t id;
 	sf::Image image;
 	sf::Texture texture;
 	float x, y, height, width, speed, gravity = DEFAULT_GRAVITY;
 	float current_frame = 0;
+	float dying = false;
 	bool isAlive = true;
 protected:
 	sf::Sprite sprite;
 	Entity_State state = Entity_State::IDLE;
 	HealthBar* HPBar = nullptr;
 	bool facing_right = true, onGround = true, isJumping = false;
+	bool isAttacking = false;
 	float dx = 0, dy = 0;
 public:
 	/* Initializers */
@@ -28,10 +33,11 @@ public:
 	void init_HPBar(float x, float y, float length, float height, HPBar_Display format, sf::Color color = sf::Color::Red, float MAX_HP = DEFAULT_MAX_HP, float HP = DEFAULT_MAX_HP);
 
 	/* Virtuals */
-	virtual void control(float& time) = 0;
-	virtual void take_damage(float amount) = 0;
+	virtual void control(const Map& map, float& time) = 0;
+	virtual void take_damage(float amount, float& time) = 0;
 	virtual void heal(float amount) = 0;
 	virtual void move(float& time);
+	virtual void attack(float& time);
 
 	/* Common Interfaces */
 	void draw_hitbox(sf::RenderWindow& window);
@@ -41,7 +47,10 @@ public:
 	void change_position(float x, float y);
 	void apply_gravity(float& time);
 
-	void collisions(const Map& map);
+	void collisions(const Map& map, float& time);
+
+	void die(float& time);
+	void play_dying_animation(float& time);
 
 	/* Getters and Setters */
 	bool is_alive() const;
@@ -63,6 +72,9 @@ public:
 
 	void frame_move(float& time);
 	void frame_clear();
+	void set_frame(float value);
+
+	bool is_dying() const;
 
 	virtual ~Entity();
 };

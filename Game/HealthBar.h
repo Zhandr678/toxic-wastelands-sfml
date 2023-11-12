@@ -2,9 +2,12 @@
 #include <SFML/Graphics.hpp>
 #include "Constants.h"
 
+class Engine;
+
 class HealthBar
 {
 private:
+	friend class Engine;
 	float max_hp, hp;
 	float bar_length, bar_height;
 	float x, y;
@@ -21,10 +24,14 @@ public:
 	HealthBar(const HealthBar& other);
 	HealthBar& operator=(const HealthBar& other);
 
+	void move(float x, float y, bool view);
 	void change_color(sf::Color color);
 	void draw(sf::RenderWindow& window) const;
 	void take_damage(float amount);
 	void heal(float amount);
+
+	float get_hp();
+
 	~HealthBar() {};
 };
 

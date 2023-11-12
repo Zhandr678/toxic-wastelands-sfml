@@ -21,6 +21,8 @@ HealthBar::HealthBar(float x, float y, float bar_length, float bar_height, HPBar
 	health.setSize(sf::Vector2f(this->bar_length - 2.0f, this->bar_height - 2.0f));
 	health.setPosition(this->x + 1.0f, this->y + 1.0f);
 	health.setFillColor(color);
+
+	update_bar(hp);
 }
 
 HealthBar::HealthBar(const HealthBar& other) :
@@ -66,6 +68,17 @@ HealthBar& HealthBar::operator=(const HealthBar& other)
 	return *this;
 }
 
+void HealthBar::move(float x, float y, bool view)
+{
+	if (this->format == HPBar_Display::FIXED and view) { 
+		full_bar.setPosition(x, y);
+		health.setPosition(x + 1.0f, y + 1.0f);
+		return; 
+	}
+	full_bar.setPosition(x, y);
+	health.setPosition(x + 1.0f, y + 1.0f);
+}
+
 void HealthBar::change_color(sf::Color color)
 {
 	this->color = color;
@@ -88,4 +101,9 @@ void HealthBar::heal(float amount)
 {
 	hp = std::min(max_hp, hp + amount);
 	update_bar(hp);
+}
+
+float HealthBar::get_hp()
+{
+	return this->hp;
 }

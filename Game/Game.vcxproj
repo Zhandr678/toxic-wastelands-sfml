@@ -23,6 +23,7 @@
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="EntityManager.cpp" />
     <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="HealthBar.cpp" />
     <ClCompile Include="Hero.cpp" />
@@ -40,12 +41,12 @@
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="EntityManager.h" />
     <ClInclude Include="FileManager.h" />
     <ClInclude Include="HealthBar.h" />
     <ClInclude Include="Hero.h" />
     <ClInclude Include="NPC.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="EntityManager.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Settings.h" />

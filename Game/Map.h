@@ -24,6 +24,9 @@ public:
 	Map(const Map& other);
 	Map& operator =(const Map& other);
 
+	sf::Vector2f get_y_boundaries() const;
+	sf::Vector2f get_x_boundaries() const;
+
 	bool intersects_with_type(float x, float y, Texture_Type type) const;
 	void draw_map(sf::RenderWindow& window);
 

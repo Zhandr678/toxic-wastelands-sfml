@@ -28,15 +28,16 @@ Map TextureManager::generate_map(std::string json_path, std::string background_f
             Texture_Type type = this->get_type(name);
             if (layer.contains("data") and layer["data"].is_array())
             {
+                int w = layer["width"].get<int>(), h = layer["height"].get<int>();
                 std::vector <std::vector <Block>> full_layer;
                 std::vector <std::vector <bool>> full_hitbox_grid;
-                for (int i = 0; i < MAX_BLOCKS_VERTICAL; i++)
+                for (int i = 0; i < h; i++)
                 {
                     std::vector <Block> _layer;
                     std::vector <bool> _hitbox_grid;
-                    for (int j = 0; j < MAX_BLOCKS_HORIZONTAL; j++)
+                    for (int j = 0; j < w; j++)
                     {
-                        uint16_t id = layer["data"][i * MAX_BLOCKS_HORIZONTAL + j];
+                        uint16_t id = layer["data"][i * w + j];
                         
                         if (id == 0) 
                         { 
@@ -52,7 +53,7 @@ Map TextureManager::generate_map(std::string json_path, std::string background_f
                     full_layer.push_back(_layer);
                     full_hitbox_grid.push_back(_hitbox_grid);
                 }
-                result.push_back(Layer(name, full_layer, full_hitbox_grid, type));
+                result.push_back(Layer(name, full_layer, full_hitbox_grid, type, w, h));
             }
         }
     }

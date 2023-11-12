@@ -18,7 +18,7 @@ public:
 	AnimatedObject(const AnimatedObject& other);
 	AnimatedObject& operator =(const AnimatedObject& other);
 
-	void draw(sf::RenderWindow& window);
+	void draw(sf::RenderWindow& window, float& timer);
 	~AnimatedObject() {};
 };
 
