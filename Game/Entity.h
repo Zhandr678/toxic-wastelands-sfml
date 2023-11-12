@@ -20,6 +20,9 @@ private:
 	float dying = false;
 	bool isAlive = true;
 protected:
+	float attackCooldown = 0.5f;
+	sf::Clock attackTimer;
+	sf::Time lastAttack = sf::Time::Zero;
 	sf::Sprite sprite;
 	Entity_State state = Entity_State::IDLE;
 	HealthBar* HPBar = nullptr;
@@ -33,11 +36,10 @@ public:
 	void init_HPBar(float x, float y, float length, float height, HPBar_Display format, sf::Color color = sf::Color::Red, float MAX_HP = DEFAULT_MAX_HP, float HP = DEFAULT_MAX_HP);
 
 	/* Virtuals */
-	virtual void control(const Map& map, float& time) = 0;
+	virtual sf::FloatRect control(const Map& map, float& time, Entity* entity) = 0;
 	virtual void take_damage(float amount, float& time) = 0;
 	virtual void heal(float amount) = 0;
 	virtual void move(float& time);
-	virtual void attack(float& time);
 
 	/* Common Interfaces */
 	void draw_hitbox(sf::RenderWindow& window);
@@ -51,6 +53,9 @@ public:
 
 	void die(float& time);
 	void play_dying_animation(float& time);
+	void play_attacking_animation(float& time);
+
+	bool intersects(sf::FloatRect rect);
 
 	/* Getters and Setters */
 	bool is_alive() const;

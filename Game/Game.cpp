@@ -29,7 +29,18 @@ int main(int argc, char** argv)
         clock.restart();
         timer /= TIME_SCALING;
 
-        engine.game_loop(window, timer);
+        if (engine.getGameState() == Game_State::MENU || engine.getGameState() == Game_State::DEATH || engine.getGameState() == Game_State::FINISH)
+        {
+            window.clear();
+            engine.menu_loop(window, timer);
+
+        }
+        else if (engine.getGameState() == Game_State::GAME)
+        {
+            window.clear();
+            engine.map_loop(window);
+            engine.game_loop(window, timer);
+        }
 
         window.display();
     }

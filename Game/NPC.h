@@ -12,9 +12,9 @@ public:
 	NPC() = delete;
 	NPC(uint16_t id, std::string path, float x, float y, float height = TILE_SIZE, float width = TILE_SIZE, float speed = DEFAULT_SPEED, float MAX_HP = DEFAULT_MAX_HP, float hp = DEFAULT_MAX_HP, HPBar_Display display = HPBar_Display::BOUND, sf::Color HBColor = sf::Color::Red);
 
-	Entity_State ai(const Map& map);
+	Entity_State ai(const Map& map, Entity* entity);
 
-	void control(const Map& map, float& time) override;
+	sf::FloatRect control(const Map& map, float& time, Entity* entity) override;
 	void take_damage(float amount, float& time) override;
 	void heal(float amount) override;
 

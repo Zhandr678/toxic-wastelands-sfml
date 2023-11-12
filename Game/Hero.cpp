@@ -7,9 +7,9 @@ Hero::Hero(uint16_t id, std::string path, float x, float y, float height, float 
 	this->movement = Settings();
 }
 
-void Hero::control(const Map& map, float& time)
+sf::FloatRect Hero::control(const Map& map, float& time, Entity* entity)
 {
-	if (!is_alive()) { return; }
+	if (!is_alive()) { return sf::FloatRect(0, 0, 0, 0); }
 	if (!this->facing_right) {
 		sf::Vector2f currentPosition = this->sprite.getPosition();
 		this->sprite.setOrigin(this->sprite.getLocalBounds().width, 0.0f);
@@ -50,11 +50,25 @@ void Hero::control(const Map& map, float& time)
 		this->set_jumping();
 		key_pressed = true;
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) and !isAttacking)
-	{
-		this->state = Entity_State::ATTACK;
-		this->sprite.setTextureRect(sf::IntRect(48 * 4, 179, this->get_size().x, this->get_size().y));
+
+	if (isAttacking) {
 		key_pressed = true;
+		play_attacking_animation(time);
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) and !isAttacking) {
+		if (attackTimer.getElapsedTime() - lastAttack >= sf::seconds(attackCooldown)) {
+			isAttacking = true;
+			this->state = Entity_State::ATTACK;
+			this->sprite.setTextureRect(sf::IntRect(48 * 4, 140, this->get_size().x, this->get_size().y));
+			key_pressed = true;
+
+			lastAttack = attackTimer.getElapsedTime();
+
+			return facing_right ?
+				sf::FloatRect(get_position().x + get_size().x + 12.0f, get_position().y, 10.0f, get_size().y) :
+				sf::FloatRect(get_position().x - 12.0f, get_position().y, 10.0f, get_size().y);
+		}
 	}
 
 	if (this->isJumping)
@@ -62,7 +76,7 @@ void Hero::control(const Map& map, float& time)
 		float temp = 0.5 * time;
 		this->frame_move(temp);
 		if (this->get_current_frame() >= 4) { this->set_frame(3); }
-		this->sprite.setTextureRect(sf::IntRect(48 * static_cast <int>(this->get_current_frame()), 77, this->get_size().x, this->get_size().y));
+		this->sprite.setTextureRect(sf::IntRect(48 * static_cast <int>(this->get_current_frame()), 68, this->get_size().x, this->get_size().y));
 	}
 
 	if (!key_pressed)
@@ -72,6 +86,7 @@ void Hero::control(const Map& map, float& time)
 		this->sprite.setTextureRect(sf::IntRect(48 * static_cast <int>(this->get_current_frame()), 0, this->get_size().x, this->get_size().y));
 		this->dx = 0;
 	}
+	return sf::FloatRect(0, 0, 0, 0);
 }
 
 void Hero::take_damage(float amount, float& time)

@@ -22,13 +22,10 @@ void Entity::move(float& time)
 	this->HPBar->move(this->x - 10.0f, this->y - 10.0f, false);
 }
 
-void Entity::attack(float& time)
+bool Entity::intersects(sf::FloatRect rect)
 {
-	isAttacking = true;
-	float temp = 1.2 * time;
-	this->frame_move(temp);
-	if (get_current_frame() >= 6) { isAttacking = false; this->set_frame(0); }
-	this->sprite.setTextureRect(sf::IntRect(48 * static_cast <int>(this->get_current_frame()), 179, this->get_size().x, this->get_size().y));
+	sf::FloatRect hitbox(get_position().x, get_position().y, get_size().x, get_size().y);
+	return rect.intersects(hitbox);
 }
 
 void Entity::apply_gravity(float& time)
@@ -42,8 +39,8 @@ void Entity::apply_gravity(float& time)
 
 void Entity::collisions(const Map& map, float& time)
 {
-	if (this->dy > 0 and (map.intersects_with_type(this->x + 2.0f, this->y + this->height + 1.8 * this->dy, Texture_Type::COLLIDABLE_TILE)
-		or map.intersects_with_type(this->x + this->width - 2.0f, this->y + this->height + 1.8 * this->dy, Texture_Type::COLLIDABLE_TILE)))
+	if (this->dy > 0 and (map.intersects_with_type(this->x + 2.0f, this->y + this->height, Texture_Type::COLLIDABLE_TILE)
+		or map.intersects_with_type(this->x + this->width - 2.0f, this->y + this->height, Texture_Type::COLLIDABLE_TILE)))
 	{
 		if (this->dy > UNHARMFUL_Y_SPEED)
 		{
@@ -94,7 +91,16 @@ void Entity::play_dying_animation(float& time)
 	float temp = 0.5 * time;
 	this->frame_move(temp);
 	if (get_current_frame() >= 5) { dying = false; set_frame(5); }
-	this->sprite.setTextureRect(sf::IntRect(48 * static_cast <int>(this->get_current_frame()), 128, this->get_size().x, this->get_size().y));
+	this->sprite.setTextureRect(sf::IntRect(48 * static_cast <int>(this->get_current_frame()), 106, this->get_size().x, this->get_size().y));
+}
+
+void Entity::play_attacking_animation(float& time)
+{
+	if (!isAttacking) { return; }
+	float temp = 5 * time;
+	this->frame_move(temp);
+	if (get_current_frame() >= 6) { isAttacking = false; frame_clear(); }
+	this->sprite.setTextureRect(sf::IntRect(48 * static_cast <int>(this->get_current_frame()), 140, this->get_size().x, this->get_size().y));
 }
 
 void Entity::draw_hitbox(sf::RenderWindow& window)

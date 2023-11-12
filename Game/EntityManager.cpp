@@ -6,10 +6,23 @@ EntityManager::EntityManager()
 {
 }
 
-void EntityManager::push(EntityGroup group, std::string path, float x, float y, float height, float width, float speed, float max_hp, float hp, HPBar_Display display, sf::Color HPcolor)
+uint16_t EntityManager::push(EntityGroup group, std::string path, float x, float y, float height, float width, float speed, float max_hp, float hp, HPBar_Display display, sf::Color HPcolor, bool key)
 {
+	if (key) { 
+		entities[666] = new NPC(id, path, x, y, height, width, speed, max_hp, hp, display, HPcolor); 
+		return 666;
+	}
+	else {
+		entities[id] = new NPC(id, path, x, y, height, width, speed, max_hp, hp, display, HPcolor);
+		id++; return id - 1;
+	}
+	
+}
+
+void EntityManager::rewrite(uint16_t id, EntityGroup group, std::string path, float x, float y, float height, float width, float speed, float max_hp, float hp, HPBar_Display display, sf::Color HPcolor)
+{
+	delete entities[id];
 	entities[id] = new NPC(id, path, x, y, height, width, speed, max_hp, hp, display, HPcolor);
-	id++;
 }
 
 Entity* EntityManager::get_entity(uint16_t id)
@@ -17,12 +30,15 @@ Entity* EntityManager::get_entity(uint16_t id)
 	return entities[id];
 }
 
-void EntityManager::control(const Map& map, float& time)
+sf::FloatRect EntityManager::control(const Map& map, float& time, Entity* entity)
 {
+	sf::FloatRect attack;
 	for (const auto& i : entities)
 	{
-		i.second->control(map, time);
+		auto hit = i.second->control(map, time, entity);
+		if (hit != sf::FloatRect(0, 0, 0, 0)) { attack = hit; }
 	}
+	return attack;
 }
 
 void EntityManager::move(float& time)
@@ -86,7 +102,7 @@ std::vector <uint16_t> EntityManager::check_fell_off(const Map& map)
 	std::vector <uint16_t> felt;
 	for (const auto& i : entities)
 	{
-		if (i.second->get_position().y + i.second->get_size().y >= map.get_y_boundaries().y) {
+		if (i.second->get_position().y + i.second->get_size().y >= map.get_y_boundaries().y - TILE_SIZE) {
 			felt.push_back(i.first);
 		}
 	}
@@ -112,6 +128,16 @@ void EntityManager::play_dying_animation(std::vector<uint16_t> dies, float& time
 	{
 		entities[i]->play_dying_animation(time);
 	}
+}
+
+std::vector<uint16_t> EntityManager::intersected(sf::FloatRect hit)
+{
+	std::vector <uint16_t> hitt;
+	for (const auto& i : entities)
+	{
+		if (i.second->intersects(hit)) { hitt.push_back(i.first); }
+	}
+	return hitt;
 }
 
 EntityManager::~EntityManager()

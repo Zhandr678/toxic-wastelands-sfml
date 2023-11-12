@@ -3,15 +3,16 @@
 
 Engine::Engine(char** argv)
 {
+	this->menu = new Menu(WINDOW_LENGTH, WINDOW_HEIGHT, this);
 	init_view();
 	this->file_manager = new FileManager(argv);
 	this->texture_manager = new TextureManager(argv);
 	this->entity_manager = new EntityManager();
 
-	this->hero = new Hero(1, "C:/Users/Home/source/repos/Game/Textures/Character_Textures/Biker/biker.png", 32, 20, 34, 32);
-	this->entity_manager->push(EntityGroup::NPC, "C:/Users/Home/source/repos/Game/Textures/Character_Textures/Biker/biker.png", 32, 20, 34, 32, 0.12, 100, 20, HPBar_Display::BOUND, sf::Color::Red);
-	this->entity_manager->push(EntityGroup::NPC, "C:/Users/Home/source/repos/Game/Textures/Character_Textures/Biker/biker.png", 400, 20, 34, 32, 0.12, 100, 20, HPBar_Display::BOUND, sf::Color::Magenta);
-	this->entity_manager->push(EntityGroup::NPC, "C:/Users/Home/source/repos/Game/Textures/Character_Textures/Biker/biker.png", 200, 20, 34, 32, 0.12, 100, 20, HPBar_Display::BOUND, sf::Color::Blue);
+	this->hero = new Hero(1, "C:/Users/Home/source/repos/Game/Textures/Character_Textures/Biker/biker.png", 32, 325, 34, 32);
+	this->entity_manager->push(EntityGroup::NPC, "C:/Users/Home/source/repos/Game/Textures/Character_Textures/Cyborg/cyborg.png", 32 * 3, WINDOW_HEIGHT - 32 * 2.5, 32, 34, 0.0, 100, 100, HPBar_Display::BOUND, sf::Color::Red, false);
+	this->entity_manager->push(EntityGroup::NPC, "C:/Users/Home/source/repos/Game/Textures/Character_Textures/Cyborg/cyborg.png", 26 * 32, WINDOW_HEIGHT - 100, 34, 34, 0.12, 100, 100, HPBar_Display::BOUND, sf::Color::Magenta, false);
+	this->entity_manager->push(EntityGroup::NPC, "C:/Users/Home/source/repos/Game/Textures/Character_Textures/Cyborg/cyborg.png", 50 * 32, WINDOW_HEIGHT - 8 * 32 - 20, 32, 34, 0.12, 100, 100, HPBar_Display::BOUND, sf::Color::Blue, false);
 
 	this->current_level = 0;
 
@@ -70,6 +71,23 @@ bool Engine::next_level()
 {
 	if (current_level + 1 >= levels.size()) { return false; }
 	current_level++;
+	
+	delete entity_manager;
+	entity_manager = new EntityManager();
+
+	if (current_level == 1)
+	{
+		this->entity_manager->push(EntityGroup::NPC, "C:/Users/Home/source/repos/Game/Textures/Character_Textures/Punk/punk.png", 32 * 26, WINDOW_HEIGHT - 32 * 2.5, 32, 34, 0.12, 100, 100, HPBar_Display::BOUND, sf::Color::Red, false);
+		this->entity_manager->push(EntityGroup::NPC, "C:/Users/Home/source/repos/Game/Textures/Character_Textures/Punk/punk.png", 32 * 3, WINDOW_HEIGHT - 32 * 2.5, 32, 34, 0.0, 100, 100, HPBar_Display::BOUND, sf::Color::Red, false);
+	}
+
+	if (current_level == 2)
+	{
+		this->entity_manager->push(EntityGroup::NPC, "C:/Users/Home/source/repos/Game/Textures/Character_Textures/Punk/punk.png", 32 * 17, WINDOW_HEIGHT - 32 * 2, 32, 34, 0.0, 100, 100, HPBar_Display::BOUND, sf::Color::Red, false);
+		antogonist = this->entity_manager->push(EntityGroup::NPC, "C:/Users/Home/source/repos/Game/Textures/Character_Textures/Biker/biker.png", 32 * 35, WINDOW_HEIGHT - 32 * 4.5, 32, 34, 0.0, 100, 100, HPBar_Display::BOUND, sf::Color::White, true);
+		entity_manager->get_entity(antogonist)->facing_right = false;
+	}
+
 	return true;
 }
 
@@ -88,6 +106,14 @@ void Engine::check_collisions(float& time)
 
 void Engine::game_loop(sf::RenderWindow& window, float& timer)
 {
+	if (current_level == 2)
+	{
+		if (!entity_manager->get_entity(666)->isAlive)
+		{
+			setGameState(Game_State::FINISH);
+		}
+	}
+
 	update_view(hero->get_position());
 	window.setView(view);
 
@@ -96,6 +122,8 @@ void Engine::game_loop(sf::RenderWindow& window, float& timer)
 	hero->draw_health(window);
 
 	entity_manager->draw(window, true, false, false);
+
+	
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::F1))
 	{
@@ -106,19 +134,75 @@ void Engine::game_loop(sf::RenderWindow& window, float& timer)
 		hero->heal(0.5f);
 	}
 
-	entity_manager->control(CURRENT_MAP, timer);
-	hero->control(CURRENT_MAP, timer);
-	check_collisions(timer);
+	auto enemy_hit = entity_manager->control(CURRENT_MAP, timer, hero);
+	auto hit = hero->control(CURRENT_MAP, timer, nullptr);
 	entity_manager->apply_gravity(timer);
 	hero->apply_gravity(timer);
+	check_collisions(timer);
+
+	entity_manager->take_damage(entity_manager->intersected(hit), DEFAULT_DAMAGE, timer);
+	if (hero->intersects(enemy_hit)) { hero->take_damage(DEFAULT_DAMAGE / 2, timer); }
+
 	entity_manager->move(timer);
 	hero->move(timer);
 
+	bool deathAnimationPlaying = false;
+
 	if (hero->is_dying())
 	{
+		deathAnimationPlaying = true;
 		hero->play_dying_animation(timer);
 	}
+
 	entity_manager->play_dying_animation(entity_manager->is_dying(), timer);
+
+	if (!deathAnimationPlaying)
+	{
+		if (!hero->isAlive)
+		{
+			setGameState(Game_State::DEATH);
+		}
+	}
+}
+
+void Engine::menu_loop(sf::RenderWindow& window, float& timer) {
+	menu->draw(window, this);
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+	{
+		menu->MoveUp();
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+	{
+		menu->MoveDown();
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
+	{
+		if (menu->GetPressedItem() == 0)
+		{
+			hero->isAlive = true;
+			hero->heal(100);
+			hero->change_position(32, 325);
+			entity_manager->rewrite(0, EntityGroup::NPC, "C:/Users/Home/source/repos/Game/Textures/Character_Textures/Cyborg/cyborg.png", 32 * 3, WINDOW_HEIGHT - 32 * 2.5, 32, 34, 0.0, 100, 100, HPBar_Display::BOUND, sf::Color::Red);
+			entity_manager->rewrite(1, EntityGroup::NPC, "C:/Users/Home/source/repos/Game/Textures/Character_Textures/Cyborg/cyborg.png", 26 * 32, WINDOW_HEIGHT - 100, 34, 34, 0.12, 100, 100, HPBar_Display::BOUND, sf::Color::Magenta);
+			entity_manager->rewrite(2, EntityGroup::NPC, "C:/Users/Home/source/repos/Game/Textures/Character_Textures/Cyborg/cyborg.png", 50 * 32, WINDOW_HEIGHT - 9 * 32, 32, 34, 0.12, 100, 100, HPBar_Display::BOUND, sf::Color::Blue);
+			std::cout << "Start button is pressed" << std::endl;
+			current_level = 0;
+			setGameState(Game_State::GAME);
+		}
+		if (menu->GetPressedItem() == 1)
+		{
+			std::cout << "Exit button is pressed" << std::endl;
+			window.close();
+		}
+	}
+}
+
+Game_State Engine::getGameState() const {
+	return this->gameState;
+}
+
+void Engine::setGameState(Game_State state) {
+	this->gameState = state;
 }
 
 void Engine::map_loop(sf::RenderWindow& window)
